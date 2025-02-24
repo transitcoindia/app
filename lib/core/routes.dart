@@ -13,6 +13,7 @@ import 'package:transit/screens/home_screens/profile_screen.dart';
 import 'package:transit/screens/home_screens/to_from_page.dart';
 import 'package:transit/screens/misc/about_us_page.dart';
 import 'package:transit/screens/misc/contact_us_page.dart';
+import 'package:transit/screens/pre_login_screens/pre_login_screen.dart';
 import 'package:transit/screens/ride_duration/ride_init.dart';
 import 'package:transit/screens/rides/your_rides.dart';
 import 'package:transit/screens/second_maps_page.dart';
@@ -23,7 +24,7 @@ GoRouter createRouter(BuildContext context) {
 return GoRouter(
   
 
-  initialLocation:(authBloc.state is AuthAuthenticated)?'/home':'/login',
+  initialLocation:(authBloc.state is AuthAuthenticated)?'/home':'/preLogin',
  refreshListenable: GoRouterRefreshStream(
   context.read<AuthBloc>().stream.where((state) =>
     state is AuthAuthenticated || state is AuthUnauthenticated),
@@ -31,7 +32,7 @@ return GoRouter(
 
   redirect: (context, state) {
     if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register')) {
-      return '/login';
+      return '/preLogin';
     } 
     //   else if (authBloc.state is WaitforOtp ) {
     //   debugPrint("rerouting here to OTP");
@@ -74,6 +75,10 @@ return GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) =>  LoginPage(),
+    ),
+    GoRoute(
+      path: '/preLogin',
+      builder: (context, state) =>  PreLoginScreen(),
     ),
      GoRoute(
       path: '/register',

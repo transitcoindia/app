@@ -28,6 +28,7 @@ import 'package:transit/repository/vendors/uber_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 Future<void> main() async {
  WidgetsFlutterBinding.ensureInitialized();
   
@@ -99,18 +100,20 @@ class MyApp extends StatelessWidget {
         },
         builder: (context, state) {
          final router = createRouter(context);
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            iconTheme: const IconThemeData(color: Colors.white),
-            textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
-           
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
+        return ScreenUtilInit(      designSize: const Size(393, 852),
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              iconTheme: const IconThemeData(color: Colors.white),
+              textTheme: const TextTheme(bodyMedium: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+             
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            routerConfig: router,
+                 
           ),
-          routerConfig: router,
-       
         );
       },
        
