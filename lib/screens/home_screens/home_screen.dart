@@ -6,78 +6,88 @@ import 'package:transit/core/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:transit/screens/home_screens/maps_page.dart';
 import 'package:transit/screens/your_location.dart';
+import 'package:transit/widgets/search_bar/search_bar.dart';
 class HomeScreen extends StatelessWidget {
    HomeScreen({super.key});
  
  final TextEditingController placeNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        bottomNavigationBar: BottomNavigationBar(backgroundColor: customgrey,
-          onTap: (value) {
-            if(value==0){
-              context.push('/page3');
-              // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              //   return const ListOfRidesPage();
-              // },));
-            }
-            if(value==1){
-              context.push('/profile');
-            
-            }
-
-          },
-          items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.white,), label: '',
-          
-          ),
-           BottomNavigationBarItem(icon: Icon(Icons.person, color: Colors.white,),label: '')
-         
-        ]),
-        body:  SingleChildScrollView(
-          child: Column(children: [
-            const TopBar(),
-            const AdvertisAdvertisementWidget(),
-             CustomSearchBarMaps(
-              label: "Search your ride",
-              controller: placeNameController,
-            ),
-            // Hero(tag: 'map-search',
-            //   child: CustomSearchBar(label: "Where to ?",controller:   placeNameController 
-            //   ,),
-            // ),
-            const Text("Save on every ride"),
-            const SaveonEveryRideWidget(),
-            BlocListener<LocationBloc,LocationState>(
-              listener: (context, state) {
-             },
-              child: BlocBuilder<LocationBloc, LocationState>(
-              builder: (context, state) {
-                if(state.currentLocation!= null) {
-          // Pass state.currentPosition as a parameter to MyLocation widget
-                return Column(
-          children: [
-           Text( context.read<LocationBloc>().locationString + 'my add' + state.locationString.toString()),
-            MyLocation(position: state.currentLocation!.latitude.toString() +state.currentLocation!.longitude.toString() ),
-          ],
-                );
-                }else{
-          return Text("Not tracking locatin");
-                }
-              },))
-          
-                 //   SaveonEveryRideWidget()
-          
-            
-          ],),
-        ),
-      ),
-    );
+    return Scaffold(
+      backgroundColor: white,
+      body: SafeArea(
+      child: Center(child: Column(
+        children: [
+          CustomSearchBar(controller: placeNameController,),
+          Text("Hello"),
+        ],
+      )),
+    ),);
   }
 }
 
+
+// Scaffold(
+//         backgroundColor: backgroundColor,
+//         bottomNavigationBar: BottomNavigationBar(backgroundColor: customgrey,
+//           onTap: (value) {
+//             if(value==0){
+//               context.push('/page3');
+//               // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+//               //   return const ListOfRidesPage();
+//               // },));
+//             }
+//             if(value==1){
+//               context.push('/profile');
+            
+//             }
+
+//           },
+//           items: const [
+//           BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.white,), label: '',
+          
+//           ),
+//            BottomNavigationBarItem(icon: Icon(Icons.person, color: Colors.white,),label: '')
+         
+//         ]),
+//         body:  SingleChildScrollView(
+//           child: Column(children: [
+//             const TopBar(),
+//             const AdvertisAdvertisementWidget(),
+//              CustomSearchBarMaps(
+//               label: "Search your ride",
+//               controller: placeNameController,
+//             ),
+//             // Hero(tag: 'map-search',
+//             //   child: CustomSearchBar(label: "Where to ?",controller:   placeNameController 
+//             //   ,),
+//             // ),
+//             const Text("Save on every ride"),
+//             const SaveonEveryRideWidget(),
+//             BlocListener<LocationBloc,LocationState>(
+//               listener: (context, state) {
+//              },
+//               child: BlocBuilder<LocationBloc, LocationState>(
+//               builder: (context, state) {
+//                 if(state.currentLocation!= null) {
+//           // Pass state.currentPosition as a parameter to MyLocation widget
+//                 return Column(
+//           children: [
+//            Text( context.read<LocationBloc>().locationString + 'my add' + state.locationString.toString()),
+//             MyLocation(position: state.currentLocation!.latitude.toString() +state.currentLocation!.longitude.toString() ),
+//           ],
+//                 );
+//                 }else{
+//           return Text("Not tracking locatin");
+//                 }
+//               },))
+          
+//                  //   SaveonEveryRideWidget()
+          
+            
+//           ],),
+//         ),
+//       ),
 class TopBar extends StatelessWidget {
   const TopBar({super.key});
 
@@ -141,49 +151,49 @@ class AdvertisAdvertisementWidget extends StatelessWidget {
   }
 }
 
-class CustomSearchBar extends StatelessWidget {
-  const CustomSearchBar({super.key,required this.label, required this.controller, });
- final String label;
+// class CustomSearchBar extends StatelessWidget {
+//   const CustomSearchBar({super.key,required this.label, required this.controller, });
+//  final String label;
 
- final TextEditingController controller;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(padding: const EdgeInsets.all(2),width: double.infinity,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: customgrey),
-        child: Center(
-          child: Card(color: transparent,elevation: 0,
-            child: GestureDetector(onTap: () {
-                     if(GoRouter.of(context).routerDelegate.currentConfiguration.fullPath == '/')
-              {                context.push('/maps-2');
-              }   
-            },
-              child: TextField(
-                 style: const TextStyle(color: white), cursorColor: white,
-                controller: controller,decoration: InputDecoration(iconColor: white,suffixIconColor: white,
-                   border: InputBorder.none, 
-                  enabledBorder: InputBorder.none, 
-                  focusedBorder: InputBorder.none, 
-                hintText: label,    hintStyle: const TextStyle(color: white),         isCollapsed: true, // Removes default padding
-              // Optional: Set hint text color       
-              contentPadding: const EdgeInsets.symmetric(vertical: 12), // Custom vertical padding
+//  final TextEditingController controller;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.all(8.0),
+//       child: Container(padding: const EdgeInsets.all(2),width: double.infinity,
+//         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: customgrey),
+//         child: Center(
+//           child: Card(color: transparent,elevation: 0,
+//             child: GestureDetector(onTap: () {
+//                      if(GoRouter.of(context).routerDelegate.currentConfiguration.fullPath == '/')
+//               {                context.push('/maps-2');
+//               }   
+//             },
+//               child: TextField(
+//                  style: const TextStyle(color: white), cursorColor: white,
+//                 controller: controller,decoration: InputDecoration(iconColor: white,suffixIconColor: white,
+//                    border: InputBorder.none, 
+//                   enabledBorder: InputBorder.none, 
+//                   focusedBorder: InputBorder.none, 
+//                 hintText: label,    hintStyle: const TextStyle(color: white),         isCollapsed: true, // Removes default padding
+//               // Optional: Set hint text color       
+//               contentPadding: const EdgeInsets.symmetric(vertical: 12), // Custom vertical padding
               
-              suffixIcon: const Icon(Icons.search),
-               ),
-               onTapAlwaysCalled: false,
-               onChanged: (value) {
+//               suffixIcon: const Icon(Icons.search),
+//                ),
+//                onTapAlwaysCalled: false,
+//                onChanged: (value) {
                 
-               },
+//                },
               
                
-                ),
-            ),
-          ),
-        ),),
-    );
-  }
-}
+//                 ),
+//             ),
+//           ),
+//         ),),
+//     );
+//   }
+// }
 
 class SaveonEveryRideWidget extends StatelessWidget {
   const SaveonEveryRideWidget({super.key});

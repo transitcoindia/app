@@ -86,7 +86,7 @@ class OtpScreen extends StatelessWidget {
                      borderColor: enabledBorderColor, // Same color for both focus and non-focus states
                      cursorColor: black,
                      filled: true,
-                     fillColor: bottomCardColor, // Background color inside the fields
+                     fillColor: enabledFillColor, // Background color inside the fields
                      borderRadius: BorderRadius.circular(8),
                      textStyle: const TextStyle(
                        color: black, // Text color set to white
@@ -127,7 +127,11 @@ InkWell(onTap: () {
 SizedBox(height: 25.h,),
 SizedBox(
   height: 56.h,
-  child: PreAuthButtons(onTap: (){}, label: "Continue", 
+  child: PreAuthButtons(onTap: (){
+    //TODO use read login
+    context.read<AuthBloc>().add(AuthLoggedIn());
+    GoRouter.of(context).push('/home');
+  }, label: "Continue", 
                             fontsize: 20.sp,
 
   fontWeight: FontWeight.w600,))
