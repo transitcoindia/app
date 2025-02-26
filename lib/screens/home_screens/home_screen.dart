@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transit/bloc/location_bloc/location_bloc.dart';
 import 'package:transit/bloc/location_bloc/location_state.dart';
 import 'package:transit/core/theme/colors.dart';
@@ -15,14 +16,26 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white,
-      body: SafeArea(
-      child: Center(child: Column(
+      body: Center(child: Column(
         children: [
-          CustomSearchBar(controller: placeNameController,),
+          Container(padding: EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topCenter,end: Alignment.bottomCenter,
+              colors: [
+           bottomCardColor,   white
+            ])),
+            child: Column(
+              children: [
+                Padding(
+                  padding:EdgeInsets.only(top:  MediaQuery.of(context).padding.top),
+                  child: CustomSearchBar(controller: placeNameController,),
+                ),
+                SizedBox(height: 20.h,)
+              ],
+            )),
           Text("Hello"),
         ],
-      )),
-    ),);
+      )),);
   }
 }
 

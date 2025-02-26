@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:transit/core/theme/colors.dart';
 
 class CustomSearchBar extends StatefulWidget {
   final TextEditingController controller;
@@ -32,17 +33,17 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         decoration: InputDecoration(
           hintText: "",
           filled: true,
-          fillColor: Colors.grey[200],
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          fillColor: white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 12,horizontal: 4),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
           prefixIcon: _isTyping
               ? null
-              : SizedBox(height: 20.h,width: 30.w,
+              : SizedBox(height: 30.h,width: 40.w,
                 child: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(6),
                     child: Image.asset(
                       "assets/logos/transit_logo.png",
                      // height: 15,
