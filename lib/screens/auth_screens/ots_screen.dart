@@ -8,6 +8,7 @@ import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/core/theme/colors.dart';
 import 'package:transit/core/widgets/safe_scaffold.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:transit/widgets/pre_auth_buttons.dart';
 
 class OtpScreen extends StatelessWidget {
   OtpScreen({super.key,
@@ -78,34 +79,56 @@ class OtpScreen extends StatelessWidget {
           
          
                 
-                  OtpTextField(
-                    numberOfFields: otpLength,
-                    fieldWidth: MediaQuery.of(context).size.width/8,
-                    borderColor: Colors.white,
-                    cursorColor: Colors.white,
-                    filled: true,
-                    fillColor: Colors.black.withOpacity(0.1), // Background color for boxes
-                    borderRadius: BorderRadius.circular(8),
-                    textStyle: const TextStyle(
-                      color: Colors.white, // Text color set to white
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    showFieldAsBox: true, // Shows the input fields as boxes
-                    onCodeChanged: (String code) {
-                      // Handle any change in the input
-                    },
-                    onSubmit: (String otp) {
-                      // If all 6 digits are entered, trigger SubmitOtp event
-          
-                      final otpValue = int.tryParse(otp);
-                      // if (otpValue != null) {
-                      //   context.read<AuthBloc>().add(RegisterUserEvent(
-                      //     email: email,name: name,password: password,phone: phoneNumber,
-                      //     otp:otpValue));
-                      // }
-                    },
-                  ),
+                 SizedBox(height: 50.h,
+                   child: OtpTextField(
+                     numberOfFields: otpLength,
+                     fieldWidth: MediaQuery.of(context).size.width / 8,
+                     borderColor: enabledBorderColor, // Same color for both focus and non-focus states
+                     cursorColor: black,
+                     filled: true,
+                     fillColor: bottomCardColor, // Background color inside the fields
+                     borderRadius: BorderRadius.circular(8),
+                     textStyle: const TextStyle(
+                       color: black, // Text color set to white
+                       fontSize: 24,
+                       fontWeight: FontWeight.bold,
+                     ),
+                     showFieldAsBox: true, // Shows the input fields as boxes
+                     enabledBorderColor: enabledBorderColor, // Ensuring both focused and non-focused borders match
+                     focusedBorderColor: enabledBorderColor,
+                     onCodeChanged: (String code) {
+                       // Handle any change in the input
+                     },
+                     onSubmit: (String otp) {
+                       final otpValue = int.tryParse(otp);
+                       // if (otpValue != null) {
+                       //   context.read<AuthBloc>().add(RegisterUserEvent(
+                       //     email: email, name: name, password: password, phone: phoneNumber,
+                       //     otp: otpValue));
+                       // }
+                     },
+                   ),
+                 )
+,
+SizedBox(height: 10.h,),
+InkWell(onTap: () {
+  
+},
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+             Text("You didn’t receive any code?", style: TextStyle(fontSize: 12.sp),),
+                                  Text("Resend Code", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),),
+            
+  ],),
+),
+SizedBox(height: 25.h,),
+SizedBox(
+  height: 56.h,
+  child: PreAuthButtons(onTap: (){}, label: "Continue", fontWeight: FontWeight.w600,))
+
+
+
                 ],
               ),
             ),
