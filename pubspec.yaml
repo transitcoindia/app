@@ -80,6 +80,9 @@ flutter:
     - assets/lin_siup_images/
     - assets/auth_icons/
     - assets/general_icons/
+    - assets/service_types/
+    - assets/bottom_bar_icons/
+
 
 
 

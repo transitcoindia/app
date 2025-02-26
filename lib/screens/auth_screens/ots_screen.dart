@@ -23,6 +23,7 @@ class OtpScreen extends StatelessWidget {
   // final String password;
 
   final int otpLength = 6;
+  final ValueNotifier<String> otpCode = ValueNotifier("");
 
   @override
   Widget build(BuildContext context) {
@@ -99,9 +100,13 @@ class OtpScreen extends StatelessWidget {
                      enabledBorderColor: enabledBorderColor, // Ensuring both focused and non-focused borders match
                      focusedBorderColor: enabledBorderColor,
                      onCodeChanged: (String code) {
+                      otpCode.value=code;
+                      // print("Codes is $code");
                        // Handle any change in the input
                      },
                      onSubmit: (String otp) {
+                      otpCode.value=otp;
+                      print(otp  + 'is final code');
                        final otpValue = int.tryParse(otp);
                        // if (otpValue != null) {
                        //   context.read<AuthBloc>().add(RegisterUserEvent(
@@ -125,16 +130,29 @@ InkWell(onTap: () {
   ],),
 ),
 SizedBox(height: 25.h,),
-SizedBox(
-  height: 56.h,
-  child: PreAuthButtons(onTap: (){
-    //TODO use read login
-    context.read<AuthBloc>().add(AuthLoggedIn());
-    GoRouter.of(context).push('/home');
-  }, label: "Continue", 
-                            fontsize: 20.sp,
-
-  fontWeight: FontWeight.w600,))
+ValueListenableBuilder<String>(
+                    valueListenable: otpCode,
+                    builder: (context, value, child) {
+                      print("aijsdnfaisdfaisd ${otpCode.value}  ${otpLength}");
+                      return SizedBox(
+                        height: 56.h,
+                        child: PreAuthButtons(
+                          enabled: otpCode.value. length == otpLength,
+                          onTap: value.length == otpLength
+                              ? () {
+                                  context
+                                      .read<AuthBloc>()
+                                      .add(AuthLoggedIn());
+                                  GoRouter.of(context).push('/home');
+                                }
+                              : null,
+                          label: "Continue",
+                          fontsize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
+                  )
 
 
 

@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:transit/core/theme/colors.dart';
+
+class TransportTypeBox extends StatelessWidget {
+  const TransportTypeBox({super.key, required this.label, required this. assetPath});
+final String label;
+final String assetPath;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(height: 10.h,width: 60.h,
+        decoration: BoxDecoration(color: elevatedButtonBlue,
+        borderRadius: BorderRadius.circular(5)
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+         Padding(
+           padding: const EdgeInsets.all(4.0),
+           child: SizedBox(
+            height: 30.h,width: 30.w,
+            child: Image.asset(assetPath,fit: BoxFit.cover,)),
+         ),
+          Text(label, style: TextStyle(color: white, fontSize: 11.sp),)
+        ],),
+      ),
+    );
+  }
+}
