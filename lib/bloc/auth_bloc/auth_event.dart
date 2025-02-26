@@ -22,6 +22,11 @@ class AuthLoginEvent extends AuthEvent {
  final String password;
 }
 
+class AuthRequestOtp extends AuthEvent {
+  const AuthRequestOtp({this.email,this.mobile});
+  final String? email;
+  final String? mobile;
+}
 class AuthErrorEvent extends AuthEvent {
   const AuthErrorEvent( {required this.errorMessage});
 

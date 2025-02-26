@@ -34,14 +34,17 @@ Future<String?> signInUser(String userName, String password)async {
  }
 
 
-Future<void> sendOtp(int phoneNumber) async{
+Future<void> sendOtp(String? phoneNumber, String? email) async{
     const otpUrl = 'https://api.transitco.in/auth/otp/send';
     try{
  final otpResponse = await http.post(
       Uri.parse(otpUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'mobile': phoneNumber,
+        if(phoneNumber!=null)
+        'mobile': phoneNumber.toString().trim(),
+         if(email!=null)
+        'email': email.toString().trim(),
       }),
     );
 

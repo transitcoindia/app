@@ -17,6 +17,6 @@ const elevatedButtonBlue = Color.fromARGB(255, 50, 68, 81);
 const deselectedCircleAvatar = Color.fromARGB(255, 217, 217, 217);
 const selectedCircleAvatar = Color.fromARGB(255, 110, 110, 110);
 const bottomCardColor = Color.fromARGB(255, 177, 212, 224);
-const borderColor = Color.fromARGB(62, 158, 158, 158);
+const borderColor = Color.fromARGB(105, 158, 158, 158);
 const enabledBorderColor = Color.fromARGB(255, 189, 235, 252);
 const enabledFillColor = Color.fromARGB(255, 223, 237, 242);

@@ -93,86 +93,6 @@ String? validateEmail(String? value) {
   },
 ),
 
-
-
-          // const SizedBox(height: 10),
-          // const Align(
-          //   alignment: Alignment.centerLeft,
-          //   child: Text("Password", style: TextStyle(fontSize: 16)),
-          // ),
-          // TextFormField(
-          //   validator: (value) =>
-          //       value == null || value.isEmpty ? 'Password cannot be empty' : null,
-          //   obscureText: true,
-          //   controller: _passwordController,
-          //   decoration: InputDecoration(
-          //     filled: true,
-          //     fillColor: Colors.white,
-          //     contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(12),
-          //       borderSide: BorderSide.none,
-          //     ),
-          //     errorBorder: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(12),
-          //       borderSide: const BorderSide(color: Colors.red),
-          //     ),
-          //     hintText: 'Enter your password',
-          //     hintStyle: const TextStyle(color: Colors.grey),
-          //   ),
-          //   style: const TextStyle(color: Colors.black),
-          // ),
-          // const SizedBox(height: 30),
-          // BlocListener<AuthBloc,AuthState>(listener: (context, state) {
-          //   if(state is AuthLoading){
-          //     showDialog(
-          //                 context: context,
-          //                 barrierDismissible: false,
-          //                 builder: (context) => const Center(child: CircularProgressIndicator()),
-          //               );
-          //   } else if (state is AuthError){
-          //     if(Navigator.canPop(context)){
-          //       Navigator.of(context).pop();
-          //       showDialog(
-          //                 context: context,
-          //                 barrierDismissible: false,
-          //                 builder: (context) =>  Dialog(
-          //                   child: SingleChildScrollView(
-          //                     child: Column(
-          //                       children: [
-          //                         Text(state.errorMessage, style: TextStyle(color: black),),
-          //                         ElevatedButton(onPressed: (){
-          //                        Navigator.of(context).pop();
-          //                         }, child: Text("Retry"))
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ),
-          //               );
-          //     }
-          //   }
-          // },
-          //   child: TextButton(
-          //     onPressed: () {
-                
-          //       if (_formKey.currentState!.validate()) {
-                  
-          //         context.read<AuthBloc>().add(AuthLoginEvent(
-          //             email: _emailController.text,
-          //             password: _passwordController.text));
-          //       }
-          //     },
-          //     style: TextButton.styleFrom(
-          //       backgroundColor: Colors.transparent,
-          //       side: const BorderSide(color: Colors.white),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(12),
-          //       ),
-          //     ),
-          //     child: const Text('Sign In', style: TextStyle(color: Colors.white)),
-          //   ),
-          // ),
-          // const SizedBox(height: 20),
              SizedBox(height: 50.h),
  ValueListenableBuilder<bool>(
                   valueListenable: _isButtonEnabled,
@@ -180,12 +100,23 @@ String? validateEmail(String? value) {
                     print("building");
                     return SizedBox(
                       height: 56.h,
-                      child: PreAuthButtons(
-                        onTap: isEnabled ? () {} : null,
-                        fontsize: 20.sp,
-                        label: "Continue",
-                        enabled: isEnabled,
-                        bold: true,fontWeight: FontWeight.w600,
+                      child: BlocListener<AuthBloc,AuthState>(listener: (context, state) {
+                        
+                      },
+                        
+                        child:  PreAuthButtons(
+                          onTap: isEnabled ? () {
+                              context.read<AuthBloc>().add(AuthRequestOtp(
+                    email: _emailController.text,
+                    mobile: _phoneController.text));
+                          } : null,
+                          fontsize: 20.sp,
+                          label: "Continue",
+                          enabled: isEnabled,
+                          bold: true,fontWeight: FontWeight.w600,
+                        )
+                      
+                     
                       ),
                     );
                   },

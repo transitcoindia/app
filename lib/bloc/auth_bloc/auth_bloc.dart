@@ -35,7 +35,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoggedOut>((event, emit) {
       emit(AuthUnauthenticated());
     });
+on<AuthRequestOtp>((event, emit)async {
+  try{
 
+    await authRepo.sendOtp(event.mobile, event.email);
+  }catch(e){
+    emit(AuthError(errorMessage: e.toString()));
+  }
+},);
     on<AuthLoginEvent>(
       (event, emit) async {
         try {

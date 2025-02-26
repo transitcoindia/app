@@ -132,10 +132,7 @@ String? validateEmail(String? value) {
               onPressed: () {
                 
                 if (_formKey.currentState!.validate()) {
-                  
-                  context.read<AuthBloc>().add(AuthLoginEvent(
-                      email: _userNameController.text,
-                      password: _passwordController.text));
+                
                 }
               },
               style: TextButton.styleFrom(
