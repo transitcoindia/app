@@ -6,6 +6,7 @@ import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/screens/auth_screens/login_page.dart';
 import 'package:transit/screens/auth_screens/ots_screen.dart';
 import 'package:transit/screens/auth_screens/register_page.dart';
+import 'package:transit/screens/auth_screens/sign_up_screen.dart';
 import 'package:transit/screens/home_screens/home_screen.dart';
 import 'package:transit/screens/home_screens/list_page.dart';
 import 'package:transit/screens/home_screens/maps_page.dart';
@@ -33,7 +34,7 @@ return GoRouter(
 
   redirect: (context, state) {
     if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
-    && state.matchedLocation != '/loginType'
+    && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
     )) {
       return '/preLogin';
     } 
@@ -66,6 +67,10 @@ return GoRouter(
     GoRoute(
       path: '/page1',
       builder: (context, state) =>  MapsPage(),
+    ),
+     GoRoute(
+      path: '/signUp',
+      builder: (context, state) =>  SignUpScreen(),
     ),
     GoRoute(
       path: '/page2',

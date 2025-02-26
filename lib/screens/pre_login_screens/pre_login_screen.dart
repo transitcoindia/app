@@ -80,68 +80,76 @@ class PreLoginScreen extends StatelessWidget {
             ),
 
                   // Animated Text Switcher
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: SizedBox(height: 100.h,
-                      child: Column(
-                        key: ValueKey<int>(index),
-                        children: [
-                          Text(
-                            preLoginHeading[index],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                  Column(
+                    children: [
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        child: SizedBox(height: 100.h,
+                          child: Column(
+                            key: ValueKey<int>(index),
+                            children: [
+                              Text(
+                                preLoginHeading[index],
+                                style: const TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  preLoginSubText[index],
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              preLoginSubText[index],
-                              textAlign: TextAlign.center,
-                            ),
+                        ),
+                      ),
+                      
+                      // Fixed Positioned Dots
+                                       // SizedBox(height: 5.h), // Spacer
+                      SizedBox(
+                        height: 20.h, // Fixed height to prevent shifting
+                        child: Align(
+                          alignment: Alignment.center, // Keeps it centered
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) => SizedBox(width: 10.w),
+                            itemCount: preLoginHeading.length,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, i) {
+                              return GestureDetector(
+                                // onTap: () => context.read<PreLoginCubit>().changeIndex(i),
+                                child: CircleAvatar(
+                                  radius: 3,
+                                  backgroundColor: i == index ? selectedCircleAvatar : deselectedCircleAvatar,
+                                ),
+                              );
+                            },
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-
-                  // Fixed Positioned Dots
-                  SizedBox(height: 10.h), // Spacer
-                  SizedBox(
-                    height: 20.h, // Fixed height to prevent shifting
-                    child: Align(
-                      alignment: Alignment.center, // Keeps it centered
-                      child: ListView.separated(
-                        separatorBuilder: (context, index) => SizedBox(width: 10.w),
-                        itemCount: preLoginHeading.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, i) {
-                          return GestureDetector(
-                            // onTap: () => context.read<PreLoginCubit>().changeIndex(i),
-                            child: CircleAvatar(
-                              radius: 5,
-                              backgroundColor: i == index ? selectedCircleAvatar : deselectedCircleAvatar,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    ],
                   ),
 
                   // Auth Buttons
-                  const SizedBox(height: 20), // Ensures fixed spacing
+                   SizedBox(height: 25.h), // Ensures fixed spacing
                   Column(
                     children: [
-                      PreAuthButtons(
-                        bold: true,
-                        onTap: () {
-                          GoRouter.of(context).push('/loginType');
-                        },
-                        label: "Log In",
+                      SizedBox(height: 29.h,
+                        child: PreAuthButtons(
+                          bold: true,
+                          onTap: () {
+                            GoRouter.of(context).push('/loginType');
+                          },
+                          label: "Log In",
+                        ),
                       ),
                       SizedBox(height: 10.h),
-                      PreAuthButtons(
-                        alt: true,
-                        onTap: () {},
-                        label: "I’m new, Sign me up",
+                      SizedBox(height: 29.h,
+                        child: PreAuthButtons(
+                          alt: true,
+                          onTap: () {},
+                          label: "I’m new, Sign me up",
+                        ),
                       ),
                     ],
                   ),

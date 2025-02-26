@@ -32,135 +32,130 @@ String? validateEmail(String? value) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-      children: [
-   
-         SizedBox(height: 10.h),
-         Text("Continue with Email"),
-         Text("Sign up with your email."),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Email", style: TextStyle(fontSize: 16)),
-        ),
-        TextFormField(
-          validator: (value) =>
-              validateEmail(value),
-          controller: _userNameController,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.red),
-            ),
-            hintText: 'Username is your email',
-            hintStyle: const TextStyle(color: Colors.grey),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: _formKey,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           InkWell(
+                                      onTap: () => Navigator.of(context).pop(),
+
+            child: SizedBox(height: 20.h,width: 20.w,child: Image.asset('assets/general_icons/back_button.png'),)),
+           SizedBox(height: 10.h),
+           Text("Continue with Email"),
+           Text("Sign up with your email."),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Email", style: TextStyle(fontSize: 16)),
           ),
-          style: const TextStyle(color: Colors.black),
-        ),
-        const SizedBox(height: 10),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Password", style: TextStyle(fontSize: 16)),
-        ),
-        TextFormField(
-          validator: (value) =>
-              value == null || value.isEmpty ? 'Password cannot be empty' : null,
-          obscureText: true,
-          controller: _passwordController,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+          TextFormField(
+            validator: (value) =>
+                validateEmail(value),
+            controller: _userNameController,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+              hintText: 'Username is your email',
+              hintStyle: const TextStyle(color: Colors.grey),
             ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.red),
-            ),
-            hintText: 'Enter your password',
-            hintStyle: const TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.black),
           ),
-          style: const TextStyle(color: Colors.black),
-        ),
-        const SizedBox(height: 30),
-        BlocListener<AuthBloc,AuthState>(listener: (context, state) {
-          if(state is AuthLoading){
-            showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => const Center(child: CircularProgressIndicator()),
-                      );
-          } else if (state is AuthError){
-            if(Navigator.canPop(context)){
-              Navigator.of(context).pop();
+          const SizedBox(height: 10),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Password", style: TextStyle(fontSize: 16)),
+          ),
+          TextFormField(
+            validator: (value) =>
+                value == null || value.isEmpty ? 'Password cannot be empty' : null,
+            obscureText: true,
+            controller: _passwordController,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+              hintText: 'Enter your password',
+              hintStyle: const TextStyle(color: Colors.grey),
+            ),
+            style: const TextStyle(color: Colors.black),
+          ),
+          const SizedBox(height: 30),
+          BlocListener<AuthBloc,AuthState>(listener: (context, state) {
+            if(state is AuthLoading){
               showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) =>  Dialog(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Text(state.errorMessage, style: TextStyle(color: black),),
-                                ElevatedButton(onPressed: (){
-                               Navigator.of(context).pop();
-                                }, child: Text("Retry"))
-                              ],
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const Center(child: CircularProgressIndicator()),
+                        );
+            } else if (state is AuthError){
+              if(Navigator.canPop(context)){
+                Navigator.of(context).pop();
+                showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) =>  Dialog(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Text(state.errorMessage, style: TextStyle(color: black),),
+                                  ElevatedButton(onPressed: (){
+                                 Navigator.of(context).pop();
+                                  }, child: Text("Retry"))
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-            }
-          }
-        },
-          child: TextButton(
-            onPressed: () {
-              
-              if (_formKey.currentState!.validate()) {
-                
-                context.read<AuthBloc>().add(AuthLoginEvent(
-                    email: _userNameController.text,
-                    password: _passwordController.text));
+                        );
               }
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              side: const BorderSide(color: Colors.white),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            }
+          },
+            child: TextButton(
+              onPressed: () {
+                
+                if (_formKey.currentState!.validate()) {
+                  
+                  context.read<AuthBloc>().add(AuthLoginEvent(
+                      email: _userNameController.text,
+                      password: _passwordController.text));
+                }
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                side: const BorderSide(color: Colors.white),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
+              child: const Text('Sign In', style: TextStyle(color: Colors.white)),
             ),
-            child: const Text('Sign In', style: TextStyle(color: Colors.white)),
           ),
-        ),
-        const SizedBox(height: 20),
-        TextButton(
-            onPressed: () {},
-            child: const Text("Forgot password ?", style: TextStyle(color: Colors.white))),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Don't have an account ?"),
-            TextButton(
-                onPressed: () {
-                  context.go('/register');
-                },
-                child: const Text("Sign up", style: TextStyle(color: Colors.white))),
-          ],
-        ),
-      ],
-    ),
+          const SizedBox(height: 20),
+          TextButton(
+              onPressed: () {},
+              child: const Text("Forgot password ?", style: TextStyle(color: Colors.white))),
+         
+        ],
+            ),
+          ),
         ),
       ),
     );

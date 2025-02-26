@@ -106,11 +106,15 @@ class MyApp extends StatelessWidget {
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
-            theme: ThemeData(
+            theme: ThemeData(fontFamily: 'Montserrat',
               iconTheme: const IconThemeData(color: Colors.white),
-              textTheme: const TextTheme(bodyMedium: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+              textTheme: const TextTheme(
+                
+    bodyLarge: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, color: Colors.black),
+
+                bodyMedium: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
              
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+              colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 3, 0, 0)),
               useMaterial3: true,
             ),
             routerConfig: router,
