@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/core/theme/colors.dart';
+import 'package:transit/screens/auth_screens/ots_screen.dart';
 import 'package:transit/widgets/pre_auth_buttons.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -106,9 +108,14 @@ String? validateEmail(String? value) {
                         
                         child:  PreAuthButtons(
                           onTap: isEnabled ? () {
-                              context.read<AuthBloc>().add(AuthRequestOtp(
-                    email: _emailController.text,
-                    mobile: _phoneController.text));
+                            //TODO ENABLE OTP
+                    //           context.read<AuthBloc>().add(AuthRequestOtp(
+                    // email: _emailController.text,
+                    // mobile: _phoneController.text));
+
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                      return OtpScreen();
+                    },));
                           } : null,
                           fontsize: 20.sp,
                           label: "Continue",

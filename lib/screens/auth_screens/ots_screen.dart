@@ -8,11 +8,13 @@ import 'package:transit/core/widgets/safe_scaffold.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OtpScreen extends StatelessWidget {
-  OtpScreen({super.key, required this.name, required this.email,required this.phoneNumber, required this.password});
-  final String name;
-  final String email;
-  final String phoneNumber;
-  final String password;
+  OtpScreen({super.key,
+  //  required this.name, required this.email,required this.phoneNumber, required this.password
+   });
+  // final String name;
+  // final String email;
+  // final String phoneNumber;
+  // final String password;
 
   final int otpLength = 6;
 
@@ -47,7 +49,7 @@ class OtpScreen extends StatelessWidget {
           );
         }
       },
-      child: SafeScaffold(
+      child: Scaffold(
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -87,11 +89,11 @@ class OtpScreen extends StatelessWidget {
                     // If all 6 digits are entered, trigger SubmitOtp event
 
                     final otpValue = int.tryParse(otp);
-                    if (otpValue != null) {
-                      context.read<AuthBloc>().add(RegisterUserEvent(
-                        email: email,name: name,password: password,phone: phoneNumber,
-                        otp:otpValue));
-                    }
+                    // if (otpValue != null) {
+                    //   context.read<AuthBloc>().add(RegisterUserEvent(
+                    //     email: email,name: name,password: password,phone: phoneNumber,
+                    //     otp:otpValue));
+                    // }
                   },
                 ),
               ],

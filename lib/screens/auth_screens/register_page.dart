@@ -172,11 +172,14 @@ String? validateConfirmPassword(String? value, String originalPassword) {
                       if (_formKeyReg.currentState!.validate()) {
                         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                           return OtpScreen(
-       name: _nameController.text,
-                              email: _emailController.text,
-                              phoneNumber: _phoneController.text,
-                              password: _passwordController.text,                          );
-                        },));
+      //  name: _nameController.text,
+      //                         email: _emailController.text,
+      //                         phoneNumber: _phoneController.text,
+      //                         password: _passwordController.text,                     
+                              
+                                   );
+                        },)
+                        );
                         // Dispatch the registration event if the form is valid
                         
                         // context.read<AuthBloc>().add(RegisterUserEvent(
