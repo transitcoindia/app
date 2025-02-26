@@ -90,8 +90,10 @@ class OtpScreen extends StatelessWidget {
                      borderRadius: BorderRadius.circular(8),
                      textStyle: const TextStyle(
                        color: black, // Text color set to white
-                       fontSize: 24,
-                       fontWeight: FontWeight.bold,
+                       fontSize: 22,
+                             height: 1, // Adjust line height if needed
+
+                       fontWeight: FontWeight.w600,
                      ),
                      showFieldAsBox: true, // Shows the input fields as boxes
                      enabledBorderColor: enabledBorderColor, // Ensuring both focused and non-focused borders match
@@ -117,7 +119,7 @@ InkWell(onTap: () {
   child: Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-             Text("You didn’t receive any code?", style: TextStyle(fontSize: 12.sp),),
+             Text("You didn’t receive any code? ", style: TextStyle(fontSize: 12.sp),),
                                   Text("Resend Code", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),),
             
   ],),
@@ -125,7 +127,10 @@ InkWell(onTap: () {
 SizedBox(height: 25.h,),
 SizedBox(
   height: 56.h,
-  child: PreAuthButtons(onTap: (){}, label: "Continue", fontWeight: FontWeight.w600,))
+  child: PreAuthButtons(onTap: (){}, label: "Continue", 
+                            fontsize: 20.sp,
+
+  fontWeight: FontWeight.w600,))
 
 
 
