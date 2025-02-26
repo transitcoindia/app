@@ -46,9 +46,9 @@ String? validateEmail(String? value) {
            SizedBox(height: 10.h),
            Text("Continue with Email"),
            Text("Sign up with your email."),
-          const Align(
+           Align(
             alignment: Alignment.centerLeft,
-            child: Text("Email", style: TextStyle(fontSize: 16)),
+            child: Text("Email", style: TextStyle(fontSize: 12.sp)),
           ),
           TextFormField(
             validator: (value) =>

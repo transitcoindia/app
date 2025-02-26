@@ -37,7 +37,7 @@ String? validateEmail(String? value) {
     return Scaffold(backgroundColor: white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child: Form(
             key: _formKey,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,12 +51,12 @@ String? validateEmail(String? value) {
            Text("Continue with Email", style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w500),),
                    SizedBox(height: 2.h),
 
-           Text("Sign up with your email."),
-                      SizedBox(height: 15.h),
+           Text("Sign up with your email.", style: TextStyle(fontSize: 12.sp),),
+                      SizedBox(height: 30.h),
 
-          const Align(
+           Align(
             alignment: Alignment.centerLeft,
-            child: Text("Email", style: TextStyle(fontSize: 16)),
+            child: Text("Email", style: TextStyle(fontSize: 12.sp)),
           ),
              SizedBox(height: 5.h),
    ValueListenableBuilder<bool>(
@@ -65,10 +65,10 @@ String? validateEmail(String? value) {
     return TextFormField(
       validator: validateEmail,
       controller: _emailController,
-      decoration: InputDecoration(
+      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
         filled: true, 
         fillColor: isEnabled ? enabledFillColor : white, // ✅ Ensure correct background fill
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none, // ✅ Remove unwanted default border
@@ -86,9 +86,9 @@ String? validateEmail(String? value) {
           borderSide: const BorderSide(color: Colors.red),
         ),
         hintText: 'Email Address',
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
       ),
-      style: const TextStyle(color: Colors.black),
+      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
     );
   },
 ),
@@ -182,10 +182,10 @@ String? validateEmail(String? value) {
                       height: 56.h,
                       child: PreAuthButtons(
                         onTap: isEnabled ? () {} : null,
-                        fontsize: 22.sp,
+                        fontsize: 20.sp,
                         label: "Continue",
                         enabled: isEnabled,
-                        bold: true,
+                        bold: true,fontWeight: FontWeight.w600,
                       ),
                     );
                   },
