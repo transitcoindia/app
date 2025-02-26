@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,12 +7,15 @@ import 'package:transit/core/data/pre_login_data.dart';
 import 'package:transit/core/theme/colors.dart';
 import 'package:transit/cubits/pre_login_cubit/pre_cubit.dart';
 import 'package:transit/widgets/pre_auth_buttons.dart';
+import 'package:animations/animations.dart';
 
 class PreLoginScreen extends StatelessWidget {
   const PreLoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+      final PageController _pageController = PageController();
+
     return Scaffold(
       backgroundColor: white,
       body: SafeArea(
@@ -32,23 +36,48 @@ class PreLoginScreen extends StatelessWidget {
                   ),
 
                   // Animated Image Switcher
-                  Container(//decoration: BoxDecoration(border: Border.all(color: Colors.pink)),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-                      child: Container(
-                        // constraints: BoxConstraints(maxHeight: 440.h, minHeight: 440.h),
-                        key: ValueKey<int>(index), // Ensures smooth animation
-                        height: 380.h, // Keep this stable
-                        child: Padding(
-                          padding: const EdgeInsets.all(0.0),
-                          child: Image.asset(
-                            fit: BoxFit.fitWidth,
-                            'assets/images/pre_login$index.png'),
+                  BlocListener<PreLoginCubit, int>(
+              listener: (context, index) {
+                _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 450.h,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(), 
+                    itemCount: 3, 
+                    itemBuilder: (context, index) {
+                      return AnimatedBuilder(
+                        animation: _pageController,
+                        builder: (context, child) {
+                          double pageOffset = 0;
+                          if (_pageController.position.haveDimensions) {
+                            pageOffset = _pageController.page! - index;
+                          }
+                          return Transform.scale(
+                            scale: 1 - (pageOffset.abs() * 0.1), 
+                            child: Opacity(
+                              opacity: 1 - (pageOffset.abs() * 0.5),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          fit: BoxFit.contain,
+                          'assets/images/pre_login$index.png',
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
+                ),
+              ),
+            ),
 
                   // Animated Text Switcher
                   AnimatedSwitcher(

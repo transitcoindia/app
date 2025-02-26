@@ -9,3 +9,5 @@ List<String> preLoginSubText = [
 "Feel secure wherever you go. With a single tap, send an emergency alert to your trusted contacts",
 "Enjoy special discounts, cashback offers, and the lowest fares—just for you!"
 ];
+
+// List<String> 

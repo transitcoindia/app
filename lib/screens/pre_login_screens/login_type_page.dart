@@ -3,14 +3,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transit/core/theme/colors.dart';
 
 class LoginTypePage extends StatelessWidget {
-  const LoginTypePage({super.key});
+   LoginTypePage({super.key});
+  final ValueNotifier<String> textNotifier = ValueNotifier<String>("signUp");
+
+
+
+
+  void switchToLogin(){
+    if(textNotifier.value=="logIn")
+   { textNotifier.value="signUp";}
+   else{
+    textNotifier.value="logIn";
+   }
+
+  }
 
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
       backgroundColor: white,
-      body: SafeArea(
+      body: SafeArea(bottom: false,
         child:
              Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -23,8 +36,20 @@ class LoginTypePage extends StatelessWidget {
                   ),
                 ),
 
-        
-                // Animated Image Switcher
+          ValueListenableBuilder<String>(
+              valueListenable: textNotifier,
+              builder: (context, value, child) {
+                return SizedBox(
+                  height: 300.h,
+                  child: Image.asset('assets/lin_siup_images/ls${value=='LogIn'?0:1}.png'),
+                );
+              },),
+            Container(height: 400.h,
+decoration: BoxDecoration(
+  color: bottomCardColor, borderRadius: BorderRadius.only(topLeft:Radius.circular(12) ,topRight:Radius.circular(12) )
+),
+
+            )
                
                 
         

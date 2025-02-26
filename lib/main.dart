@@ -110,7 +110,7 @@ class MyApp extends StatelessWidget {
               iconTheme: const IconThemeData(color: Colors.white),
               textTheme: const TextTheme(bodyMedium: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
              
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
               useMaterial3: true,
             ),
             routerConfig: router,
