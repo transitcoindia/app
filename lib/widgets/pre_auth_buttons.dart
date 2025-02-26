@@ -7,7 +7,8 @@ class PreAuthButtons extends StatelessWidget {
   required this.label,
   this.alt=false, this.border=true,
   this.enabled=true,this.fontsize,
-  this.horizontalPadding=8
+  this.horizontalPadding=8,
+  this.fontWeight
   });
 final void Function()? onTap;
 final String label;
@@ -18,6 +19,7 @@ final bool border;
 final bool enabled;
 final double? fontsize;
 final double horizontalPadding;
+final FontWeight? fontWeight;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,9 +43,9 @@ final double horizontalPadding;
             if(leadingIcon!=null)
             SizedBox(height: 20.h,width: 20.w,child: Image.asset(leadingIcon!),),
           
-           if(leadingIcon!=null)SizedBox(width: 4.w,),
+           if(leadingIcon!=null)SizedBox(width: 6.w,),
             Text(label,style: TextStyle(fontSize: fontsize,
-              fontWeight: bold?FontWeight.bold:null,
+              fontWeight:fontWeight!=null?fontWeight: bold?FontWeight.bold:null,
               color:enabled? alt?elevatedButtonBlue:white:white
             ),),
           ],

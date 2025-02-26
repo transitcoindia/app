@@ -161,45 +161,79 @@ class _LoginTypePageState extends State<LoginTypePage> with TickerProviderStateM
                       ),
                     ),
                     SizedBox(height: 3.h,),
-                    SizedBox(
-                      height: 38.h,
-                      child: PreAuthButtons(bold: true,horizontalPadding: 2,
-                        leadingIcon: 'assets/auth_icons/email.png',
-                        border: false,
-                        label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Email',
-                        onTap: () {
+                    ValueListenableBuilder<String>(
+                      valueListenable: textNotifier,
+                      builder: (context, value, child) {
+                        return SizedBox(
+                        height: 38.h,
+                        child: PreAuthButtons(bold: true,horizontalPadding: 2,
+                          leadingIcon: 'assets/auth_icons/email.png',
+                                                fontWeight: FontWeight.w500,
+                      
+                          border: false,
+                          label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Email',
+                          onTap: () {
+                      
+                            GoRouter.of(context).push('/signUp');
+                          },
+                        ),
+                      );
 
-                          GoRouter.of(context).push('/signUp');
-                        },
-                      ),
+                      },
+                     
                     ),
-                    SizedBox(
-                      height: 38.h,
-                      child: PreAuthButtons(bold: true,horizontalPadding: 2,
-                        leadingIcon: 'assets/auth_icons/google.png',
-                        border: false,
-                        label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Google',
-                        onTap: () {},
-                      ),
+                    ValueListenableBuilder<String>(
+                                            valueListenable: textNotifier,
+builder: (context, value, child) {
+  return SizedBox(
+                        height: 38.h,
+                        child: PreAuthButtons(bold: true,horizontalPadding: 2,
+                                              fontWeight: FontWeight.w500,
+                      
+                          leadingIcon: 'assets/auth_icons/google.png',
+                          border: false,
+                          label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Google',
+                          onTap: () {},
+                        ),
+                      );
+},
+                     
                     ),
-                    SizedBox(
-                      height: 38.h,
-                      child: PreAuthButtons(bold: true,horizontalPadding: 2,
-                        leadingIcon: 'assets/auth_icons/mobile.png',
-                        border: false,
-                        label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Phone',
-                        onTap: () {},
-                      ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: textNotifier,
+                      builder: (context, value, child) {
+                        return  SizedBox(
+                        height: 38.h,
+                        child: PreAuthButtons(bold: true,horizontalPadding: 2,
+                        fontWeight: FontWeight.w500,
+                          leadingIcon: 'assets/auth_icons/mobile.png',
+                          border: false,
+                          label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Phone Number',
+                          onTap: () {},
+                        ),
+                      );
+                      },
+                     
                     ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: switchToLogin,
-                        child: Text(
-                          textNotifier.value == "logIn"
-                              ? "Don't have an account? Sign up"
-                              : "Already have an account? Log in",
-                          style: TextStyle(color: black),
+                        style: ButtonStyle(
+    overlayColor: WidgetStateProperty.all(Colors.transparent), // Disables ripple effect
+    splashFactory: NoSplash.splashFactory, // Disables touch feedback
+  ),
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: textNotifier,
+                          builder: (context, value, child) {
+                            return Text(
+                            textNotifier.value == "logIn"
+                                ? "Don't have an account? Sign up"
+                                : "Already have an account? Log in",
+                            style: TextStyle(color: black, fontWeight: FontWeight.w200),
+                          );
+                          },
+                     
                         ),
                       ),
                     ),

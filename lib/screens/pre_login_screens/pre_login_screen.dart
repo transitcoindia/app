@@ -153,6 +153,8 @@ class PreLoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                                     SizedBox(height: 25.h), // Ensures fixed spacing
+
                 ],
               );
             },
