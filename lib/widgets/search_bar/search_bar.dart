@@ -40,12 +40,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           ),
           prefixIcon: _isTyping
               ? null
-              : SizedBox(height: 10.h,
+              : SizedBox(height: 20.h,width: 30.w,
                 child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Image.asset(
                       "assets/logos/transit_logo.png",
-                      height: 15,
+                     // height: 15,
                     ),
                   ),
               ),
