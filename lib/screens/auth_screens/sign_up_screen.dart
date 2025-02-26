@@ -114,7 +114,7 @@ String? validateEmail(String? value) {
                     // mobile: _phoneController.text));
 
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                      return OtpScreen();
+                      return OtpScreen(email: _emailController.text,phoneNumber:  _phoneController.text);
                     },));
                           } : null,
                           fontsize: 20.sp,

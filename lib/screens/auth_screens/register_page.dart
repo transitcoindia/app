@@ -170,16 +170,16 @@ String? validateConfirmPassword(String? value, String originalPassword) {
                   TextButton(
                     onPressed: () {
                       if (_formKeyReg.currentState!.validate()) {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                          return OtpScreen(
-      //  name: _nameController.text,
-      //                         email: _emailController.text,
-      //                         phoneNumber: _phoneController.text,
-      //                         password: _passwordController.text,                     
+      //                   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      //                     return OtpScreen(email: '',
+      // //  name: _nameController.text,
+      // //                         email: _emailController.text,
+      // //                         phoneNumber: _phoneController.text,
+      // //                         password: _passwordController.text,                     
                               
-                                   );
-                        },)
-                        );
+      //                              );
+      //                   },)
+      //                   );
                         // Dispatch the registration event if the form is valid
                         
                         // context.read<AuthBloc>().add(RegisterUserEvent(
