@@ -17,6 +17,7 @@ import 'package:transit/bloc/venderos_all_bloc/rapido_bloc/rapido_bloc.dart';
 import 'package:transit/bloc/venderos_all_bloc/uberBloc/uber_bloc.dart';
 import 'package:transit/bloc/vendors_bloc.dart/vendor_bloc.dart';
 import 'package:transit/core/routes.dart';
+import 'package:transit/cubits/pre_login_cubit/pre_cubit.dart';
 import 'package:transit/repository/places_repo.dart';
 import 'package:transit/repository/vendors/blusmart_repo.dart';
 import 'package:transit/repository/vendors/indrive_repo.dart';
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
                                 
                                 ),
                                          BlocProvider(create: (context) => RideBloc(),),
+                                         BlocProvider(create: (context) => PreLoginCubit(),),
 
 
 

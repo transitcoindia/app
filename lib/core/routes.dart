@@ -13,6 +13,7 @@ import 'package:transit/screens/home_screens/profile_screen.dart';
 import 'package:transit/screens/home_screens/to_from_page.dart';
 import 'package:transit/screens/misc/about_us_page.dart';
 import 'package:transit/screens/misc/contact_us_page.dart';
+import 'package:transit/screens/pre_login_screens/login_type_page.dart';
 import 'package:transit/screens/pre_login_screens/pre_login_screen.dart';
 import 'package:transit/screens/ride_duration/ride_init.dart';
 import 'package:transit/screens/rides/your_rides.dart';
@@ -31,7 +32,9 @@ return GoRouter(
 ),
 
   redirect: (context, state) {
-    if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register')) {
+    if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
+    && state.matchedLocation != '/loginType'
+    )) {
       return '/preLogin';
     } 
     //   else if (authBloc.state is WaitforOtp ) {
@@ -75,6 +78,10 @@ return GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) =>  LoginPage(),
+    ),
+    GoRoute(
+      path: '/loginType',
+      builder: (context, state) =>  LoginTypePage(),
     ),
     GoRoute(
       path: '/preLogin',
