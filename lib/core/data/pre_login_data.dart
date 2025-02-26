@@ -10,4 +10,12 @@ List<String> preLoginSubText = [
 "Enjoy special discounts, cashback offers, and the lowest fares—just for you!"
 ];
 
-// List<String> 
+List<String> authTypeHeading =[
+"Get started",
+"Welcome back"
+];
+
+List<String> authTypeDesc =[
+"Register for great offers and plan your perfect trip today!",
+"Register for great offers and plan your perfect trip today!"
+];

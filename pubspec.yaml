@@ -78,6 +78,8 @@ flutter:
     - assets/logos/
     - assets/images/
     - assets/lin_siup_images/
+    - assets/auth_icons/
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

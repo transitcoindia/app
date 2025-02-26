@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/bloc/auth_bloc/auth_state.dart';
@@ -30,23 +31,20 @@ String? validateEmail(String? value) {
 
   @override
   Widget build(BuildContext context) {
-    return SafeScaffold(
+    return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
           key: _formKey,
           child: Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: SizedBox(
-            child: Image.asset('assets/images/Login.jpg'),
-          ),
-        ),
-        const SizedBox(height: 10),
+   
+         SizedBox(height: 10.h),
+         Text("Continue with Email"),
+         Text("Sign up with your email."),
         const Align(
           alignment: Alignment.centerLeft,
-          child: Text("Username", style: TextStyle(fontSize: 16)),
+          child: Text("Email", style: TextStyle(fontSize: 16)),
         ),
         TextFormField(
           validator: (value) =>
