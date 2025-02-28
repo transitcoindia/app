@@ -24,14 +24,29 @@ String? validateEmail(String? value) {
   }
   return null;
 }
-String? validateNumber(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Number cannot be empty';
+String? validateNumber(String? phoneNumber) {
+  
+  if(phoneNumber==null ){
+    return "Phone number cannot be empty.";
+
   }
-  // if (!isValidEmail(value)) {
-  //   return 'Enter a valid email address';
+  if (phoneNumber.isEmpty) {
+    return "Phone number cannot be empty.";
+  }
+
+  if (!RegExp(r'^\+?[0-9]*$').hasMatch(phoneNumber)) {
+    return "Phone number must contain only numbers and an optional leading '+'.";
+  }
+
+  // if (phoneNumber.startsWith('0')) {
+  //   return "Phone number should not start with zero.";
   // }
-  return null;
+
+  if ((phoneNumber.length < 10 || phoneNumber.length > 15)) {
+    return "Phone number must be between 10 and 15 digits.";
+  }
+
+  return null; // If all checks pass
 }
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
@@ -126,7 +141,7 @@ String? validateNumber(String? value) {
                     //           context.read<AuthBloc>().add(AuthRequestOtp(
                     // email: _emailController.text,
                     // mobile: _phoneController.text));
-
+if(_formKey.currentState!.validate())
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                       return OtpScreen(email: _emailController.text,phoneNumber:  _phoneController.text);
                     },));
