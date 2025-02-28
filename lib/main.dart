@@ -35,19 +35,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> main() async {
  final widgetsBinding =  WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide UI bars
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide UI bars
 
     // debugPrint("Phase 2");
-FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+// FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // Initialize HydratedStorage and set it as the storage for HydratedBloc
   // if(!kIsWeb ) {
   //   HydratedBloc.storage = await HydratedStorage.build(
   //   storageDirectory: await getApplicationDocumentsDirectory(),
   // );
   // }
+    FlutterNativeSplash.remove();
 
   runApp(const MyApp());
-    FlutterNativeSplash.remove();
 
 }
 

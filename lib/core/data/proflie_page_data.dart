@@ -20,3 +20,16 @@ List<String> legalaBIconPaths = [
 "assets/profile_page_icons/advert.png",
 "assets/profile_page_icons/terms.png"
 ];
+
+List<String> settings = [
+"Accounts & Devices",
+"Notifications",
+"Logout",
+
+];
+List<String> sesttingsIconPaths = [
+"assets/profile_page_icons/accounts.png",
+"assets/profile_page_icons/notifications.png",
+"assets/profile_page_icons/logout.png",
+
+];

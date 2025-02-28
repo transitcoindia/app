@@ -27,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       body: Container(decoration: BoxDecoration(color: profileBackgroundGrey),
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProfileTopContainer(),
@@ -36,7 +36,7 @@ SizedBox(height:  10.h),
  
             _buildTitle("My Toolkit"),
 
-            ListView.builder(shrinkWrap: true,
+            ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
             padding: EdgeInsets.all(0),
               itemCount: myToolkitItems.length,
               itemBuilder: (context, index) {
@@ -50,7 +50,7 @@ SizedBox(height:  10.h),
             },),
             SizedBox(height: 20.h,),
 _buildTitle("Legal & Buisness"),
-            ListView.builder(
+            ListView.builder(physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.all(0),
               shrinkWrap: true,
               itemCount: legalaB.length,
@@ -59,10 +59,36 @@ _buildTitle("Legal & Buisness"),
                 top:index==0,bottom: index==legalaB.length-1,
                 label: legalaB[index],iconPath: legalaBIconPaths[index],
             onTap: () {
+              switch(index){
+                case 0:
+                
+                break;
+                case 1:
+                break;
+                case 2:
+                break;
+                case 3:
+                break;
+              }
+            },
+              );
+            },),
+                        SizedBox(height: 20.h,),
+
+            _buildTitle("My Settings"),
+
+            ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.all(0),
+              itemCount: settings.length,
+              itemBuilder: (context, index) {
+              return ProfilePageItem(
+                  top:index==0,bottom: index==settings.length-1,
+                label: settings[index],iconPath: sesttingsIconPaths[index],
+            onTap: () {
               
             },
               );
-            },)
+            },),
           ],
         ),
       ),

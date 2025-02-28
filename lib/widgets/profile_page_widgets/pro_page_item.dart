@@ -29,7 +29,7 @@ final bool bottom;
         children: [
         SizedBox(height: 20.h,width: 20.w,child: Image.asset(iconPath),),
         SizedBox(width: 10.w,),
-        Text(label),
+        Text(label, style: TextStyle(color: label=="Logout"?red:null),),
      Spacer(),
         Align(
           alignment: Alignment.centerRight,
