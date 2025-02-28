@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/bloc/auth_bloc/auth_state.dart';
@@ -30,9 +32,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 Future<void> main() async {
- WidgetsFlutterBinding.ensureInitialized();
-  
+ final widgetsBinding =  WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide UI bars
+
+    // debugPrint("Phase 2");
+FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // Initialize HydratedStorage and set it as the storage for HydratedBloc
   // if(!kIsWeb ) {
   //   HydratedBloc.storage = await HydratedStorage.build(
@@ -41,91 +47,105 @@ Future<void> main() async {
   // }
 
   runApp(const MyApp());
+    FlutterNativeSplash.remove();
+
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
-  
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc()..add(AuthCheckRequested()),),
-        BlocProvider(create: (context) => LocationBloc()..add(RequestLocationPermission(),)),
-                BlocProvider(create: (context) => MapBloc(),),
-                BlocProvider(create: (context) => AutocompleteBloc(AutoCompleteService()),),
-
-
-
-
-                 BlocProvider(create: (context) => UberBloc(UberRepository()),),
-                                  BlocProvider(create: (context) => MeruBloc(MeruRepository()),),
-                                                                    BlocProvider(create: (context) => BlusmartBloc(BlusmartRepo()),),
-
-                                  BlocProvider(create: (context) => IndriverBloc(IndriveRepository()),),
-
-                                  BlocProvider(create: (context) => NammaYatriBloc(NammaYatriRepository()),),
-
-                                  BlocProvider(create: (context) => OlaBloc(OlaRepository()),),
-
-                                  BlocProvider(create: (context) => RapidoBloc(RapidoRepository()),),
-
-
-
-                                BlocProvider(create: (context) => VendorsBloc(UberBloc(UberRepository()),OlaBloc(OlaRepository()),
-                                RapidoBloc(RapidoRepository()),IndriverBloc(IndriveRepository()),MeruBloc(MeruRepository()),NammaYatriBloc(NammaYatriRepository()),
-                                BlusmartBloc(BlusmartRepo()),
-
-
-
-                                ),
-                                
-                                
-                                ),
-                                         BlocProvider(create: (context) => RideBloc(),),
-                                         BlocProvider(create: (context) => PreLoginCubit(),),
-
-
-
+        BlocProvider(
+          create: (context) => AuthBloc()..add(AuthCheckRequested()),
+        ),
+        BlocProvider(
+            create: (context) => LocationBloc()
+              ..add(
+                RequestLocationPermission(),
+              )),
+        BlocProvider(
+          create: (context) => MapBloc(),
+        ),
+        BlocProvider(
+          create: (context) => AutocompleteBloc(AutoCompleteService()),
+        ),
+        BlocProvider(
+          create: (context) => UberBloc(UberRepository()),
+        ),
+        BlocProvider(
+          create: (context) => MeruBloc(MeruRepository()),
+        ),
+        BlocProvider(
+          create: (context) => BlusmartBloc(BlusmartRepo()),
+        ),
+        BlocProvider(
+          create: (context) => IndriverBloc(IndriveRepository()),
+        ),
+        BlocProvider(
+          create: (context) => NammaYatriBloc(NammaYatriRepository()),
+        ),
+        BlocProvider(
+          create: (context) => OlaBloc(OlaRepository()),
+        ),
+        BlocProvider(
+          create: (context) => RapidoBloc(RapidoRepository()),
+        ),
+        BlocProvider(
+          create: (context) => VendorsBloc(
+            UberBloc(UberRepository()),
+            OlaBloc(OlaRepository()),
+            RapidoBloc(RapidoRepository()),
+            IndriverBloc(IndriveRepository()),
+            MeruBloc(MeruRepository()),
+            NammaYatriBloc(NammaYatriRepository()),
+            BlusmartBloc(BlusmartRepo()),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => RideBloc(),
+        ),
+        BlocProvider(
+          create: (context) => PreLoginCubit(),
+        ),
       ],
-      child: BlocBuilder<AuthBloc,AuthState>(
+      child: BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (previous, current) {
-          if(current is AuthLoading || current is AuthError){
+          if (current is AuthLoading || current is AuthError) {
             debugPrint("ahksdfhsdaf");
             return false;
-          }else{
+          } else {
             debugPrint("rebuilding");
             return true;
           }
         },
         builder: (context, state) {
-         final router = createRouter(context);
-        return ScreenUtilInit(      designSize: const Size(393, 852),
-          child: MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: ThemeData(fontFamily: 'Montserrat',
-              iconTheme: const IconThemeData(color: Colors.white),
-              textTheme: const TextTheme(
-                
-    bodyLarge: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, color: Colors.black),
-
-                bodyMedium: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
-             
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 3, 0, 0)),
-              useMaterial3: true,
+          final router = createRouter(context);
+          return ScreenUtilInit(
+            designSize: const Size(393, 852),
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                fontFamily: 'Montserrat',
+                iconTheme: const IconThemeData(color: Colors.white),
+                textTheme: const TextTheme(
+                    bodyLarge: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                    bodyMedium: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+                colorScheme: ColorScheme.fromSeed(
+                    seedColor: const Color.fromARGB(255, 3, 0, 0)),
+                useMaterial3: true,
+              ),
+              routerConfig: router,
             ),
-            routerConfig: router,
-                 
-          ),
-        );
-      },
-       
-       
+          );
+        },
       ),
     );
   }
 }
-

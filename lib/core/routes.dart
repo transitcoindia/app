@@ -33,21 +33,21 @@ return GoRouter(
 ),
 
   redirect: (context, state) {
-    if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
-    && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
-    )) {
-      return '/preLogin';
-    } 
+    // if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
+    // && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
+    // )) {
+    //   return '/preLogin';
+    // } 
     //   else if (authBloc.state is WaitforOtp ) {
     //   debugPrint("rerouting here to OTP");
     //   return '/otp';
     // }
-    else if (authBloc.state is AuthError){
-      return null;
-    }
-    else if (authBloc.state is AuthAuthenticated && state.matchedLocation == '/login') {
-      return '/home';
-    }
+    // else if (authBloc.state is AuthError){
+    //   return null;
+    // }
+    // else if (authBloc.state is AuthAuthenticated && state.matchedLocation == '/login') {
+    //   return '/home';
+    // }
 
    return null;
     // // Redirect to home if authenticated and trying to access login page

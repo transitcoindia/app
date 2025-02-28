@@ -34,7 +34,7 @@ class CustomNavBar extends StatelessWidget {
         child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/explore.png'),)),
       InkWell(
         onTap: () {
-         GoRouter.of(context).go('/profile');
+         GoRouter.of(context).push('/profile');
         },
         child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/profile.png'),)),
             

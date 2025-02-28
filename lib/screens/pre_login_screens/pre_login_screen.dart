@@ -18,7 +18,7 @@ class PreLoginScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: white,
-      body: SafeArea(
+      body: SafeArea(left: false,right: false,
         child: BlocProvider(
           create: (_) => PreLoginCubit(),
           child: BlocBuilder<PreLoginCubit, int>(
@@ -28,11 +28,26 @@ class PreLoginScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Logo
-                  Center(
-                    child: SizedBox(
-                      height: 26.h,
-                      child: Image.asset('assets/logos/transit_logo.png'),
+                  Stack(
+                    children: [Center(
+                      child: SizedBox(
+                        height: 26.h,
+                        child: Image.asset('assets/logos/transit_logo.png'),
+                      ),
                     ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(height: 40.h,
+                        child: InkWell(
+                          onTap: () {
+                            GoRouter.of(context).pushReplacement('/home');
+                          },
+                          child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("SKIP", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16.sp),),
+                        ),),
+                      ))
+                    ]
                   ),
 
                   // Animated Image Switcher
@@ -45,7 +60,7 @@ class PreLoginScreen extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(0.0),
                 child: SizedBox(
                   height: 450.h,
                   child: PageView.builder(
@@ -53,24 +68,27 @@ class PreLoginScreen extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(), 
                     itemCount: 3, 
                     itemBuilder: (context, index) {
-                      return AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          double pageOffset = 0;
-                          if (_pageController.position.haveDimensions) {
-                            pageOffset = _pageController.page! - index;
-                          }
-                          return Transform.scale(
-                            scale: 1 - (pageOffset.abs() * 0.1), 
-                            child: Opacity(
-                              opacity: 1 - (pageOffset.abs() * 0.5),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: Image.asset(
-                          fit: BoxFit.contain,
-                          'assets/images/pre_login$index.png',
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: AnimatedBuilder(
+                          animation: _pageController,
+                          builder: (context, child) {
+                            double pageOffset = 0;
+                            if (_pageController.position.haveDimensions) {
+                              pageOffset = _pageController.page! - index;
+                            }
+                            return Transform.scale(
+                              scale: 1 - (pageOffset.abs() * 0.1), 
+                              child: Opacity(
+                                opacity: 1 - (pageOffset.abs() * 0.5),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Image.asset(
+                            fit: BoxFit.contain,
+                            'assets/images/pre_login$index.png',
+                          ),
                         ),
                       );
                     },

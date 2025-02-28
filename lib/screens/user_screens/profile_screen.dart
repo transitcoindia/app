@@ -16,7 +16,9 @@ class ProfileScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: false,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
           icon: const Icon(Icons.arrow_back),
         ),
         title: Container(
