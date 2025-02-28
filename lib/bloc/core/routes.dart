@@ -9,13 +9,13 @@ import 'package:transit/screens/auth_screens/register_page.dart';
 import 'package:transit/screens/home_screens/home_screen.dart';
 import 'package:transit/screens/home_screens/list_page.dart';
 import 'package:transit/screens/home_screens/maps_page.dart';
-import 'package:transit/screens/home_screens/profile_screen.dart';
 import 'package:transit/screens/home_screens/to_from_page.dart';
 import 'package:transit/screens/misc/about_us_page.dart';
 import 'package:transit/screens/misc/contact_us_page.dart';
 import 'package:transit/screens/ride_duration/ride_init.dart';
 import 'package:transit/screens/rides/your_rides.dart';
 import 'package:transit/screens/second_maps_page.dart';
+import 'package:transit/screens/user_screens/profile_screen.dart';
 bool isAuthenticated = true;
 
 GoRouter createRouter(BuildContext context) {

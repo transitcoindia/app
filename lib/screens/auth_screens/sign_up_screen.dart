@@ -10,7 +10,8 @@ import 'package:transit/screens/auth_screens/ots_screen.dart';
 import 'package:transit/widgets/pre_auth_buttons.dart';
 
 class SignUpScreen extends StatelessWidget {
-   SignUpScreen({super.key});
+   SignUpScreen({super.key,required this.type});
+   final String type;
  bool isValidEmail(String value) {
   return RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value);
 }
@@ -23,6 +24,15 @@ String? validateEmail(String? value) {
   }
   return null;
 }
+String? validateNumber(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Number cannot be empty';
+  }
+  // if (!isValidEmail(value)) {
+  //   return 'Enter a valid email address';
+  // }
+  return null;
+}
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -33,9 +43,13 @@ String? validateEmail(String? value) {
 
   @override
   Widget build(BuildContext context) {
+    type=='email'?
       _emailController.addListener(() {
       _isButtonEnabled.value = _emailController.text.isNotEmpty;
+    }): _phoneController.addListener(() {
+      _isButtonEnabled.value = _phoneController.text.isNotEmpty;
     });
+
     return Scaffold(backgroundColor: white,
       body: SafeArea(
         child: Padding(
@@ -50,25 +64,25 @@ String? validateEmail(String? value) {
 
             child: SizedBox(height: 20.h,width: 20.w,child: Image.asset('assets/general_icons/back_button.png'),)),
            SizedBox(height: 10.h),
-           Text("Continue with Email", style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w500),),
+           Text("Continue with ${type=='email'?'Email':'Mobile'}", style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w500),),
                    SizedBox(height: 2.h),
 
-           Text("Sign up with your email.", style: TextStyle(fontSize: 12.sp),),
+           Text("Sign up with your ${type=='email'?'Email':'Mobile'}", style: TextStyle(fontSize: 12.sp),),
                       SizedBox(height: 30.h),
 
            Align(
             alignment: Alignment.centerLeft,
-            child: Text("Email", style: TextStyle(fontSize: 12.sp)),
+            child: Text("${type=='email'?'Email':'Mobile'}", style: TextStyle(fontSize: 12.sp)),
           ),
              SizedBox(height: 5.h),
    ValueListenableBuilder<bool>(
   valueListenable: _isButtonEnabled,
   builder: (context, isEnabled, child) {
-    return TextFormField(
-      validator: validateEmail,
-      controller: _emailController,
+    return TextFormField(keyboardType: type=='email'?TextInputType.emailAddress:TextInputType.number,
+      validator:type=='email'? validateEmail:validateNumber,
+      controller:type=='email'? _emailController:_phoneController,
       decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
-        filled: true, 
+        filled: true,
         fillColor: isEnabled ? enabledFillColor : white, // ✅ Ensure correct background fill
         contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         border: OutlineInputBorder(
@@ -87,7 +101,7 @@ String? validateEmail(String? value) {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red),
         ),
-        hintText: 'Email Address',
+        hintText:" ${type=='email'?'Email':'Mobile Number'}",
         hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
       ),
       style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),

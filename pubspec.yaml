@@ -82,6 +82,7 @@ flutter:
     - assets/general_icons/
     - assets/service_types/
     - assets/bottom_bar_icons/
+    - assets/profile_page_icons/
 
 
 

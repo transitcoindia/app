@@ -20,3 +20,4 @@ const bottomCardColor = Color.fromARGB(255, 177, 212, 224);//B1D4E0
 const borderColor = Color.fromARGB(105, 158, 158, 158);
 const enabledBorderColor = Color.fromARGB(255, 189, 235, 252);
 const enabledFillColor = Color.fromARGB(255, 223, 237, 242);
+const profileBackgroundGrey =  Color.fromARGB(255, 242, 242, 242);

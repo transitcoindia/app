@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/core/theme/colors.dart';
@@ -23,12 +24,17 @@ class CustomNavBar extends StatelessWidget {
         child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-      SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/home.png', height: iconSize,),),
-         SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/travel.png'),),
-      SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/explore.png'),),
+      InkWell(
+        child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/home.png', height: iconSize,),)),
+         InkWell(child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/travel.png'),)),
       InkWell(
         onTap: () {
-          context.read<AuthBloc>().add(AuthLogout());
+           context.read<AuthBloc>().add(AuthLogout());
+        },
+        child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/explore.png'),)),
+      InkWell(
+        onTap: () {
+         GoRouter.of(context).go('/profile');
         },
         child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/profile.png'),)),
             
