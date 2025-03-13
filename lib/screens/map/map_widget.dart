@@ -35,7 +35,6 @@ class _MapScreenState extends State<MapScreen> {
       body: BlocBuilder<LocationBloc, LocationState>(
         builder: (context, locationState) {
           if (locationState.currentLocation == null) {
-            log(locationState.currentLocation.toString());
 
             context.read<LocationBloc>().add(RequestLocationPermission());
                         context.read<LocationBloc>().add(StartLocationTracking());
@@ -49,13 +48,17 @@ class _MapScreenState extends State<MapScreen> {
           );
           
           return BlocBuilder<MapBloc,MapState>(builder: (context, state) {
+
             Set<Marker> markers = {};
             if(state.markers.isNotEmpty)
-            markers.addAll(state.markers );
+           { markers.addAll(state.markers );}
+           print("PRINTING POLYINESSSSS");
+           print(state.polylines);
  if (state.polylines.isNotEmpty) {
   // Assuming you have userLocation (start) and destination as LatLng objects
     if(state.customSource!=null) {
-      LatLng userLocation = state.customSource!;
+      LatLng userLocation = state.customSource
+      !;
     }
   LatLng destination = context.read<MapBloc>().destination!; // Assuming you have the destination in state
 
@@ -80,7 +83,9 @@ class _MapScreenState extends State<MapScreen> {
     _mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50)); // 50 is padding
   });
 }
-
+log("UPDATING POLYLINESSSSSS");
+log(state.polylines.toString());
+log(state.polylines.first.toString());
 
             return  GoogleMap(
               zoomControlsEnabled: true,

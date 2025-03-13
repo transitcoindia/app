@@ -53,7 +53,6 @@ on<ChangeSource>((event, emit) async {
       );
 
       final results = response.data['results'] as List;
-      log(results.toString());
       if (results.isNotEmpty) {
         final location = results[0]['geometry']['location'];
         latitude = location['lat'];
@@ -123,22 +122,64 @@ on<FindRoute>((event, emit) async {
    destination = await  _getLatLong(event.destination);
    destinationString = event.description;
    print(destination!.toJson());   print(destination.runtimeType);
+  final String url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
-  final response = await _dio.get(
-    'https://maps.googleapis.com/maps/api/directions/json',
-    queryParameters: {
-      'origin': '$latitude,$longitude', // Current location
-      'destination': '${destination!.latitude},${destination!.longitude}', // Selected destination
-      'key': _apiKey,
+  final Map<String, dynamic> requestBody = {
+    "origin": {
+      "location": {
+        "latLng": {
+          "latitude": latitude,
+          "longitude": longitude
+        }
+      }
     },
-  );
-log("aldfnasdhfiashfasdfasf");
-log(response.data.toString());
-log("aldfnasdhfiashfasdfasf");
+    "destination": {
+      "location": {
+        "latLng": {
+          "latitude": destination!.latitude,
+          "longitude": destination!.longitude
+        }
+      }
+    },
+    "travelMode": "DRIVE",
+    "routingPreference": "TRAFFIC_AWARE",
+    "computeAlternativeRoutes": false,
+    "routeModifiers": {
+      "avoidTolls": false,
+      "avoidHighways": false,
+      "avoidFerries": false
+    },
+    "languageCode": "en-US",
+    "units": "IMPERIAL"
+  };
+   final response = await _dio.post(
+      url,
+      data: requestBody,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': _apiKey,
+          'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+        },
+      ),
+    );
+     
 
-  final polylinePoints = response.data['routes'][0]['overview_polyline']['points'];
-  final points = _decodePolyline(polylinePoints);
+         List<LatLng> points=[];
+         final routes = response.data['routes'];
+       
+        //   final routes = response.data['routes'];
+        //  log('Routes are ${routes.toString()}');
 
+  if (response.data != null && response.data['routes'] != null && response.data['routes'].isNotEmpty) {
+      final polylinePoints = response.data['routes'][0]["polyline"]["encodedPolyline"];
+      if (polylinePoints != null) {
+         List<LatLng> points = _decodePolyline(polylinePoints);
+      } else {
+      }
+    } else {
+
+    }
   final polyline = Polyline(
     polylineId: const PolylineId('route'),
     points: points,
@@ -149,6 +190,7 @@ log("aldfnasdhfiashfasdfasf");
   emit(state.copyWith(
     polylines: Set.from(state.polylines)..add(polyline)
   ));
+  print("EMITING STATE WITH ${Set.from(state.polylines)..add(polyline)}");
 });}
 
   List<LatLng> _decodePolyline(String polyline) {
@@ -190,8 +232,8 @@ Future<LatLng?> _getLatLong( String pid)async {
       'key': 'AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc',
     },
   );
-log("Get lat long called ${pid}");
-log(response.data.toString());
+
+
   final location = response.data['result']['geometry']['location'];
 
   final destination = LatLng(location['lat'], location['lng']);

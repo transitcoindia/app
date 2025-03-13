@@ -63,9 +63,7 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
             }),
             BlocBuilder<AutocompleteBloc, AutocompleteState>(
           builder: (context, state) {
-            log('SHould be erer ${state.toString()}');
             if (state is AutocompleteLoadedSource ) {
-              log(state.predictions.length.toString());
               return Container(
                 constraints: const BoxConstraints(minHeight: 0, maxHeight: 150),
                 child: SingleChildScrollView(
@@ -134,9 +132,7 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
               ),
                BlocBuilder<AutocompleteBloc, AutocompleteState>(
           builder: (context, state) {
-            log('SHould be erer ${state.toString()}');
             if (state is AutocompleteLoadedDestination ) {
-              log(state.predictions.length.toString());
               return Container(
                 constraints: const BoxConstraints(minHeight: 0, maxHeight: 150),
                 child: SingleChildScrollView(
@@ -155,12 +151,11 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
                         //    + "is my current");
 // context.push('/page1');         print("LKJHKJHKJHKJHKHK");           
   }
-                          fromController.text =
+                          toController.text =
                               state.predictions[index].description;
                           context
                               .read<AutocompleteBloc>()
                               .add(CompletedSuggestion());
-log("SEARCHING FOR PLEACS ${state.predictions[index]}");
                           context.read<MapBloc>().add(FindRoute(
                               state.predictions[index].placeId,
                               state.predictions[index].description));

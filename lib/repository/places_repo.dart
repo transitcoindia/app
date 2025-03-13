@@ -20,7 +20,6 @@ class AutoCompleteService {
 
     try {
       final response = await _dio.getUri(uri);
-      log(response.toString());
       if (response.statusCode == 200) {
         final data = response.data;
         final autocompleteResponse = AutocompleteResponse.fromJson(data);
