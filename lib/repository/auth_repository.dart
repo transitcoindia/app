@@ -19,11 +19,15 @@ Future<String?> signInUser(String userName, String password)async {
         'password':password
       }),
     );
- final responseData = jsonDecode(loginResponse.body);
+    //  log(loginResponse.body.toString());
+    //  log(loginResponse.statusCode.toString());
+
+  final Map<String, dynamic> responseData = jsonDecode(loginResponse.body);
  var token =null;
 if (responseData.containsKey('token')) {
    token = responseData['token'];
   print("Token: $token");
+
 } else {
   print("Token not found in response.");
 }
@@ -33,14 +37,17 @@ if (responseData.containsKey('token')) {
         
 
     ){
-
+      log(responseData.containsKey('user').toString());
+log(responseData['user'].containsKey('id').toString());
    final prefs = await SharedPreferences.getInstance();
       await prefs.setString("password", password);
       await prefs.setString(_authTokenKey, token);
       await prefs.setString("email",userName);
-    return null;
+      await prefs.setString("userId",responseData['user']['id']);
+    return responseData['user']['id'];
     }else{
-  return json.decode(loginResponse.body)['message'];
+      throw(json.decode(loginResponse.body)['message']);
+   
     }
 
 
@@ -76,7 +83,7 @@ Future<void> sendOtp(String? phoneNumber, String? email) async{
 
 
 
-Future<void> registerUser(String userName, String password, String name, String phoneNumber,int otp) async {
+Future<String?> registerUser(String userName, String password, String name,) async {
   const registerUrl = 'https://transit-be.vercel.app/api/user/register/email';
 
   try {
@@ -89,21 +96,25 @@ Future<void> registerUser(String userName, String password, String name, String 
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'name': name,
-          'mobile': phoneNumber,
+          // 'mobile': phoneNumber,
           'email': userName,
           'password': password,
-          'otp': otp.toString(),
+          // 'otp': otp.toString(),
         }),
       );
-
+log(response.toString());
       if (response.statusCode == 200) {
         print('User registered successfully: ${response.body}');
+        return null;
       } else {
         print('Failed to register user: ${response.body}');
+        return response.body.toString();
       }
+
     
   } catch (e) {
     print('An error occurred: $e');
+    return 'Error occoured';
   }
 }
 
@@ -118,5 +129,12 @@ Future<void> registerUser(String userName, String password, String name, String 
  
  await Future.delayed(const Duration(seconds: 3));
   return Future.value();}
+
+  logout() async{
+       final prefs = await SharedPreferences.getInstance();
+      await prefs.remove("password");
+      await prefs.remove(_authTokenKey);
+      await prefs.remove("email");
+  }
 
 }

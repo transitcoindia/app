@@ -119,7 +119,7 @@ String? validateNumber(String? phoneNumber) {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red),
         ),
-        hintText:"password",
+        hintText:"name",
         hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
       ),
       style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
@@ -194,7 +194,11 @@ TextFormField(//keyboardType: ,
                     return SizedBox(
                       height: 56.h,
                       child: BlocListener<AuthBloc,AuthState>(listener: (context, state) {
-                        
+                        if(state is AuthError){
+                          showDialog(context: context, builder: (context) {
+                            return Container(child: Text(state.errorMessage),);
+                          },);
+                        }
                       },
                         
                         child:  PreAuthButtons(
@@ -204,10 +208,8 @@ TextFormField(//keyboardType: ,
                     // email: _emailController.text,
                     // mobile: _phoneController.text));
 // if(_formKey.currentState!.validate())
-// context.read<AuthBloc>().add(RegisterUserEvent(name: , email: email, phone: phone, password: password, otp: otp))
-                    // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                    //   return OtpScreen(email: _emailController.text,phoneNumber:  _phoneController.text);
-                    // },));
+context.read<AuthBloc>().add(RegisterUserEvent(name: _nameController.text, email: _emailController.text,  password: _passwordController.text,));
+                    
                           } : null,
                           fontsize: 20.sp,
                           label: "Continue",

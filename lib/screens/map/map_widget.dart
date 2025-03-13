@@ -85,7 +85,7 @@ class _MapScreenState extends State<MapScreen> {
 }
 log("UPDATING POLYLINESSSSSS");
 log(state.polylines.toString());
-log(state.polylines.first.toString());
+// log(state.polylines.first.toString());
 
             return  GoogleMap(
               zoomControlsEnabled: true,

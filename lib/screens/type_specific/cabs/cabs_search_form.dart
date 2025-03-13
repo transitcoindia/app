@@ -216,7 +216,7 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
   // ));
 },
 
-                child: Text("Search Flights", style: TextStyle(fontSize: 18.sp)),
+                child: Text("Search Cabs", style: TextStyle(fontSize: 18.sp)),
               ),
             ),
                 //  FlightResultsWidget(),

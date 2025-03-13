@@ -37,17 +37,17 @@ class AuthErrorEvent extends AuthEvent {
 class RegisterUserEvent extends AuthEvent {
   final String name;
   final String email;
-  final String phone;
+  // final String phone;
   final String password;
-  final int otp;
+  // final int otp;
 
 
   const RegisterUserEvent({
     required this.name,
     required this.email,
-    required this.phone,
+    // required this.phone,
     required this.password,
-    required this.otp
+    // required this.otp
    
   });
 }

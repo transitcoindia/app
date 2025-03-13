@@ -1,34 +1,48 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/bloc/auth_bloc/auth_state.dart';
+import 'package:transit/bloc/user_specific/user_bloc.dart/user_bloc.dart';
+import 'package:transit/bloc/user_specific/user_bloc.dart/user_event.dart';
 import 'package:transit/repository/auth_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final authRepo = AuthRepo();
+    final UserBloc userBloc; // Inject UserBloc
+
   bool isAuthenticated = false;
     static const String _authTokenKey = 'authToken';
 
  Stream<AuthState> get authStateStream => stream.where((state) =>
     state is AuthAuthenticated || state is AuthUnauthenticated);
-  AuthBloc() : super(AuthInitial()) {
+  AuthBloc( this.userBloc) : super(AuthInitial()) {
 
 
 
     
     on<AuthCheckRequested>((event, emit) async{
+      log("Auth check requested");
        final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(_authTokenKey);
     final email = prefs.getString("email");
     final password = prefs.getString("password");
+          log("Auth check ${token}");
+
  if (!(token==null || token.isEmpty)) {
+        emit(AuthAuthenticated());
+
   await  authRepo.   signInUser(email!, password!).then((value) {
-    if(value==null){
+   
       isAuthenticated=true;
-    }
+      log("Passing $value");
+      userBloc.add(LoadUser(value!));
+      log(isAuthenticated.toString());
+    
   },);
   
       // _isLoggedIn = true;
@@ -40,7 +54,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // log("No saved token found, user is not logged in");
     }
       if (isAuthenticated) {
-        emit(AuthAuthenticated());
       } else {
         emit(AuthUnauthenticated());
       }
@@ -71,12 +84,14 @@ on<AuthRequestOtp>((event, emit)async {
               .signInUser(event.email, event.password)
               .then(
                 (value) {
-                  if(value==null)
-                   {emit(AuthAuthenticated());
-              isAuthenticated = true;}
-              else{
-                  emit(AuthError(errorMessage:value.toString() ));
-              }
+                
+                   emit(AuthAuthenticated());
+              isAuthenticated = true;
+
+                    userBloc.add(LoadUser(value!));
+
+              
+              
                 },
               ).onError(
                 (error, stackTrace) {
@@ -101,8 +116,13 @@ on<AuthRequestOtp>((event, emit)async {
   on<RegisterUserEvent>((event, emit) async {
     emit(AuthLoading());
     try {
-  await authRepo.registerUser(event.email,event.password,event.name,event.phone,event.otp);
- emit(AuthAuthenticated());
+ final res= await authRepo.registerUser(event.email,event.password,event.name);
+if(res==null)
+{ emit(AuthAuthenticated());}
+else{
+  emit(AuthError(errorMessage: res));
+
+}
  // emit(WaitforOtp());
  
 }  catch (e) {
@@ -112,7 +132,8 @@ on<AuthRequestOtp>((event, emit)async {
   },);
 
 
-on<AuthLogout>((event, emit) {
+on<AuthLogout>((event, emit)async {
+  await authRepo.logout();
   debugPrint("I am emitting the unauth state");
   emit(AuthUnauthenticated());
 },);

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
+import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/core/data/proflie_page_data.dart';
 import 'package:transit/core/theme/colors.dart';
 import 'package:transit/screens/user_screens/legal_b_page.dart';
@@ -91,7 +94,9 @@ _buildTitle("Legal & Buisness"),
                   top:index==0,bottom: index==settings.length-1,
                 label: settings[index],iconPath: sesttingsIconPaths[index],
             onTap: () {
-              
+              if(index==2){
+                context.read<AuthBloc>().add(AuthLogout());
+              }
             },
               );
             },),
