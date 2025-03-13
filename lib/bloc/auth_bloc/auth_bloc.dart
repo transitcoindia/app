@@ -5,10 +5,13 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/repository/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final authRepo = AuthRepo();
   bool isAuthenticated = false;
+    static const String _authTokenKey = 'authToken';
+
  Stream<AuthState> get authStateStream => stream.where((state) =>
     state is AuthAuthenticated || state is AuthUnauthenticated);
   AuthBloc() : super(AuthInitial()) {
@@ -16,11 +19,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
     
-    on<AuthCheckRequested>((event, emit) {
-      // Here you can check the authentication state from a service or storage
-      // For simplicity, we'll just simulate it.
-      // Replace with your actual logic
-
+    on<AuthCheckRequested>((event, emit) async{
+       final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(_authTokenKey);
+    final email = prefs.getString("email");
+    final password = prefs.getString("password");
+ if (!(token==null || token.isEmpty)) {
+  await  authRepo.   signInUser(email!, password!).then((value) {
+    if(value==null){
+      isAuthenticated=true;
+    }
+  },);
+  
+      // _isLoggedIn = true;
+      // // Optionally, you can load the user details if required
+      // _userProvider.loadUser(email,); // Call this with a proper identifier if required
+      // log("User is already logged in");
+    } else {
+      // handleError("TOken is ${token.toString()}");
+      // log("No saved token found, user is not logged in");
+    }
       if (isAuthenticated) {
         emit(AuthAuthenticated());
       } else {

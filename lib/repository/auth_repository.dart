@@ -2,8 +2,11 @@
 
 import 'dart:convert';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepo {
+    static const String _authTokenKey = 'authToken';
 
 Future<String?> signInUser(String userName, String password)async {
  const loginUrl = 'https://transit-be.vercel.app/api/user/login/email';
@@ -16,11 +19,25 @@ Future<String?> signInUser(String userName, String password)async {
         'password':password
       }),
     );
-    print(loginResponse.body.toString());
+ final responseData = jsonDecode(loginResponse.body);
+ var token =null;
+if (responseData.containsKey('token')) {
+   token = responseData['token'];
+  print("Token: $token");
+} else {
+  print("Token not found in response.");
+}
+
     if(
-      loginResponse.statusCode == 200   // TODO: Remove comment in prod
-      
+      loginResponse.statusCode == 200 && token!=null  // TODO: Remove comment in prod
+        
+
     ){
+
+   final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("password", password);
+      await prefs.setString(_authTokenKey, token);
+      await prefs.setString("email",userName);
     return null;
     }else{
   return json.decode(loginResponse.body)['message'];
