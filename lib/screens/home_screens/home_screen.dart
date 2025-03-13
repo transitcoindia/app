@@ -67,7 +67,25 @@ class HomeScreen extends StatelessWidget {
                 child: ListView.separated(shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
-                  return TransportTypeBox(label:transportNames[index], assetPath:serviceTypeAssetString[index]);
+                  return TransportTypeBox(
+                    
+                    onTap: () {
+                      switch(index){
+                        case 0://cabs
+                        GoRouter.of(context).push('/cabs');
+                        break;
+                         case 1://flights
+                         GoRouter.of(context).push('/flights');
+                        break;
+                         case 2://trains
+                        break;
+                         case 3://busses
+                        break;
+                         case 4://stays
+                        break;
+                      }
+                    },
+                    label:transportNames[index], assetPath:serviceTypeAssetString[index]);
                 }, separatorBuilder: (context, index) {
                   return SizedBox(width: 1.w,);
                 }, itemCount: 5),

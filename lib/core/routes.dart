@@ -7,6 +7,7 @@ import 'package:transit/screens/auth_screens/login_page.dart';
 import 'package:transit/screens/auth_screens/ots_screen.dart';
 import 'package:transit/screens/auth_screens/register_page.dart';
 import 'package:transit/screens/auth_screens/sign_up_screen.dart';
+import 'package:transit/screens/cabs/cabs_home.dart';
 import 'package:transit/screens/home_screens/home_screen.dart';
 import 'package:transit/screens/home_screens/list_page.dart';
 import 'package:transit/screens/home_screens/maps_page.dart';
@@ -18,6 +19,7 @@ import 'package:transit/screens/pre_login_screens/pre_login_screen.dart';
 import 'package:transit/screens/ride_duration/ride_init.dart';
 import 'package:transit/screens/rides/your_rides.dart';
 import 'package:transit/screens/second_maps_page.dart';
+import 'package:transit/screens/type_specific/flight_home.dart';
 import 'package:transit/screens/user_screens/profile_screen.dart';
 bool isAuthenticated = true;
 
@@ -87,6 +89,14 @@ return GoRouter(
     GoRoute(
       path: '/loginType',
       builder: (context, state) =>  LoginTypePage(),
+    ),
+    GoRoute(
+      path: '/cabs',
+      builder: (context, state) =>  CabsHome(),
+    ),
+    GoRoute(
+      path: '/flights',
+      builder: (context, state) =>  FlightHome(),
     ),
     GoRoute(
       path: '/preLogin',

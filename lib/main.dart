@@ -6,6 +6,7 @@ import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
 import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/bloc/autocomplete_bloc.dart/acomp_bloc.dart';
+import 'package:transit/bloc/flights_bloc/flight_bloc.dart';
 import 'package:transit/bloc/location_bloc/location_bloc.dart';
 import 'package:transit/bloc/location_bloc/location_event.dart';
 import 'package:transit/bloc/maps_bloc/maps_bloc.dart';
@@ -19,7 +20,9 @@ import 'package:transit/bloc/venderos_all_bloc/rapido_bloc/rapido_bloc.dart';
 import 'package:transit/bloc/venderos_all_bloc/uberBloc/uber_bloc.dart';
 import 'package:transit/bloc/vendors_bloc.dart/vendor_bloc.dart';
 import 'package:transit/core/routes.dart';
+import 'package:transit/core/theme/colors.dart';
 import 'package:transit/cubits/pre_login_cubit/pre_cubit.dart';
+import 'package:transit/repository/flight_repo.dart';
 import 'package:transit/repository/places_repo.dart';
 import 'package:transit/repository/vendors/blusmart_repo.dart';
 import 'package:transit/repository/vendors/indrive_repo.dart';
@@ -66,6 +69,9 @@ class MyApp extends StatelessWidget {
               ..add(
                 RequestLocationPermission(),
               )),
+        BlocProvider(
+          create: (context) => FlightSearchBloc(FlightRepository()),
+        ),
         BlocProvider(
           create: (context) => MapBloc(),
         ),
@@ -128,7 +134,7 @@ class MyApp extends StatelessWidget {
             child: MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'Flutter Demo',
-              theme: ThemeData(
+              theme: ThemeData(appBarTheme: AppBarTheme(backgroundColor:enabledFillColor ),
                 fontFamily: 'Montserrat',
                 iconTheme: const IconThemeData(color: Colors.white),
                 textTheme: const TextTheme(

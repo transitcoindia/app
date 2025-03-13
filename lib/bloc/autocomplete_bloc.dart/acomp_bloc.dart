@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit/bloc/autocomplete_bloc.dart/acomp_event.dart';
 import 'package:transit/bloc/autocomplete_bloc.dart/acompstate.dart';
@@ -23,7 +25,10 @@ class AutocompleteBloc extends Bloc<AutocompleteEvent, AutocompleteState> {
       if(event.pos== Pos.source){
             emit(AutocompleteLoading(Pos.source));
       final predictions = await auto.fetchAutoComplete(inp: event.input);
-
+      log("heruoehiurhuihrue");
+log(predictions.toString());
+log(predictions.toString());
+log(predictions.length.toString());
         emit(AutocompleteLoadedSource(predictions));
       }else{
                     emit(AutocompleteLoading(Pos.destination));

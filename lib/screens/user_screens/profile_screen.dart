@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transit/core/data/proflie_page_data.dart';
 import 'package:transit/core/theme/colors.dart';
+import 'package:transit/screens/user_screens/legal_b_page.dart';
 import 'package:transit/widgets/profile_page_widgets/pro_page_item.dart';
 import 'package:transit/widgets/profile_page_widgets/profile_top_cont.dart';
 
@@ -59,17 +60,22 @@ _buildTitle("Legal & Buisness"),
                 top:index==0,bottom: index==legalaB.length-1,
                 label: legalaB[index],iconPath: legalaBIconPaths[index],
             onTap: () {
-              switch(index){
-                case 0:
-                
-                break;
-                case 1:
-                break;
-                case 2:
-                break;
-                case 3:
-                break;
-              }
+                   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return LegalBPage(index:  index);
+                },));
+              // switch(index){
+              //   case 0:
+              //   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              //     return LegalBPage(index:  index);
+              //   },));
+              //   break;
+              //   case 1:
+              //   break;
+              //   case 2:
+              //   break;
+              //   case 3:
+              //   break;
+              // }
             },
               );
             },),
