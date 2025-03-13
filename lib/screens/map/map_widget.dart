@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +23,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
+    if(context.read<LocationBloc>().state.currentLocation==null 
+    )
       context.read<LocationBloc>().add(RequestLocationPermission());
 
     super.initState();
@@ -31,8 +35,9 @@ class _MapScreenState extends State<MapScreen> {
       body: BlocBuilder<LocationBloc, LocationState>(
         builder: (context, locationState) {
           if (locationState.currentLocation == null) {
+            log(locationState.currentLocation.toString());
 
-          //  context.read<LocationBloc>().add(RequestLocationPermission());
+            context.read<LocationBloc>().add(RequestLocationPermission());
                         context.read<LocationBloc>().add(StartLocationTracking());
 
             return const Center(child: CircularProgressIndicator());

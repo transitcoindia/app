@@ -90,6 +90,40 @@ String? validateNumber(String? phoneNumber) {
             child: Text("${type=='email'?'Email':'Mobile'}", style: TextStyle(fontSize: 12.sp)),
           ),
              SizedBox(height: 5.h),
+             TextFormField(//keyboardType: ,
+      validator:(value) {
+        if(value ==null || value.length==0){
+          return 'Name cannot be empty';
+
+        }
+        return null;
+      },
+      controller:_nameController,
+      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
+        filled: true,
+        fillColor: true ? enabledFillColor : white, // ✅ Ensure correct background fill
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none, // ✅ Remove unwanted default border
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Apply correct enabled border
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Ensure focused border is correct
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        hintText:"password",
+        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
+      ),
+      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
+    ),
    ValueListenableBuilder<bool>(
   valueListenable: _isButtonEnabled,
   builder: (context, isEnabled, child) {
@@ -123,6 +157,34 @@ String? validateNumber(String? phoneNumber) {
     );
   },
 ),
+TextFormField(//keyboardType: ,
+      validator:validateEmail,
+      controller:_passwordController,
+      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
+        filled: true,
+        fillColor: true ? enabledFillColor : white, // ✅ Ensure correct background fill
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none, // ✅ Remove unwanted default border
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Apply correct enabled border
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Ensure focused border is correct
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        hintText:"password",
+        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
+      ),
+      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
+    ),
 
              SizedBox(height: 50.h),
  ValueListenableBuilder<bool>(
@@ -141,10 +203,11 @@ String? validateNumber(String? phoneNumber) {
                     //           context.read<AuthBloc>().add(AuthRequestOtp(
                     // email: _emailController.text,
                     // mobile: _phoneController.text));
-if(_formKey.currentState!.validate())
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                      return OtpScreen(email: _emailController.text,phoneNumber:  _phoneController.text);
-                    },));
+// if(_formKey.currentState!.validate())
+// context.read<AuthBloc>().add(RegisterUserEvent(name: , email: email, phone: phone, password: password, otp: otp))
+                    // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    //   return OtpScreen(email: _emailController.text,phoneNumber:  _phoneController.text);
+                    // },));
                           } : null,
                           fontsize: 20.sp,
                           label: "Continue",

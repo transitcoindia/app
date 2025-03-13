@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,7 +15,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
    String? destinationString;
 
   final Dio _dio = Dio();
-  final String _apiKey = 'AIzaSyAZnppGFNNFQXYq_-B4tpLJQYbm4xUWIY4';
+  final String _apiKey = 'AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc';
 
   MapBloc() : super(const MapState()) {
     on<OnMapCreated>((event, emit) {
@@ -51,6 +53,7 @@ on<ChangeSource>((event, emit) async {
       );
 
       final results = response.data['results'] as List;
+      log(results.toString());
       if (results.isNotEmpty) {
         final location = results[0]['geometry']['location'];
         latitude = location['lat'];
@@ -129,6 +132,9 @@ on<FindRoute>((event, emit) async {
       'key': _apiKey,
     },
   );
+log("aldfnasdhfiashfasdfasf");
+log(response.data.toString());
+log("aldfnasdhfiashfasdfasf");
 
   final polylinePoints = response.data['routes'][0]['overview_polyline']['points'];
   final points = _decodePolyline(polylinePoints);
@@ -181,10 +187,11 @@ Future<LatLng?> _getLatLong( String pid)async {
     'https://maps.googleapis.com/maps/api/place/details/json',
     queryParameters: {
       'place_id': pid,
-      'key': 'AIzaSyAZnppGFNNFQXYq_-B4tpLJQYbm4xUWIY4',
+      'key': 'AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc',
     },
   );
-
+log("Get lat long called ${pid}");
+log(response.data.toString());
   final location = response.data['result']['geometry']['location'];
 
   final destination = LatLng(location['lat'], location['lng']);

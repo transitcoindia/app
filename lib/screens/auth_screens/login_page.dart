@@ -132,17 +132,17 @@ String? validateEmail(String? value) {
               onPressed: () {
                 
                 if (_formKey.currentState!.validate()) {
-                
+                context.read<AuthBloc>().add(AuthLoginEvent(email: _userNameController.text, password: _passwordController.text));
                 }
               },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.transparent,
-                side: const BorderSide(color: Colors.white),
+                side: const BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Sign In', style: TextStyle(color: Colors.white)),
+              child: const Text('Sign In', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
             ),
           ),
           const SizedBox(height: 20),

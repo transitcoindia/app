@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 class AutocompletePrediction {
   final String description;
   final String placeId;
@@ -12,8 +9,8 @@ class AutocompletePrediction {
 
   factory AutocompletePrediction.fromJson(Map<String, dynamic> json) {
     return AutocompletePrediction(
-      description: json['displayName']['text'] as String,
-      placeId: json['formattedAddress'] as String,
+      description: json['description'] as String,
+      placeId: json['place_id'] as String,
     );
   }
 }
@@ -26,9 +23,9 @@ class AutocompleteResponse {
   });
 
   factory AutocompleteResponse.fromJson(Map<String, dynamic> json) {
-    var placesJson = json['places'] as List;
-    List<AutocompletePrediction> predictions = placesJson
-        .map((placeJson) => AutocompletePrediction.fromJson(placeJson))
+    var predictionsJson = json['predictions'] as List;
+    List<AutocompletePrediction> predictions = predictionsJson
+        .map((predictionJson) => AutocompletePrediction.fromJson(predictionJson))
         .toList();
 
     return AutocompleteResponse(predictions: predictions);

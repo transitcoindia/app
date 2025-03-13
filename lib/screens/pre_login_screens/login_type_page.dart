@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:transit/core/data/pre_login_data.dart';
 import 'package:transit/core/theme/colors.dart';
+import 'package:transit/screens/auth_screens/login_page.dart';
 import 'package:transit/screens/auth_screens/sign_up_screen.dart';
 import 'package:transit/widgets/pre_auth_buttons.dart';
 
@@ -174,7 +175,10 @@ class _LoginTypePageState extends State<LoginTypePage> with TickerProviderStateM
                           border: false,
                           label: '${textNotifier.value == "logIn" ? "Login" : "Sign Up"} with Email',
                           onTap: () {
-                      
+                            textNotifier.value == "logIn"?
+                       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                             return LoginPage();
+                           },)):
                            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                              return SignUpScreen(type:'email');
                            },));

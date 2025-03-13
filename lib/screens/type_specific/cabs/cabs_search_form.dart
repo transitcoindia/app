@@ -12,6 +12,9 @@ import 'package:transit/bloc/flights_bloc/flight_bloc.dart';
 import 'package:transit/bloc/maps_bloc/maps_bloc.dart';
 import 'package:transit/bloc/maps_bloc/maps_event.dart';
 import 'package:transit/cubits/flights_cubit/flight_det_cubit.dart';
+import 'package:transit/screens/home_screens/maps_page.dart';
+import 'package:transit/screens/map/empty_maps.dart';
+import 'package:transit/screens/map/map_widget.dart';
 import 'package:transit/screens/type_specific/flights/search_results.dart';
 
 class CabsSearchForm extends StatefulWidget {
@@ -86,10 +89,9 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
                           context
                               .read<AutocompleteBloc>()
                               .add(CompletedSuggestion());
-
-                          context.read<MapBloc>().add(FindRoute(
-                              state.predictions[index].placeId,
-                              state.predictions[index].description));
+   context.read<MapBloc>().add(ChangeSource(query:  state.predictions[index].description,
+                            placeId:   state.predictions[index].placeId,
+                              ));;
                         },
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -158,7 +160,7 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
                           context
                               .read<AutocompleteBloc>()
                               .add(CompletedSuggestion());
-
+log("SEARCHING FOR PLEACS ${state.predictions[index]}");
                           context.read<MapBloc>().add(FindRoute(
                               state.predictions[index].placeId,
                               state.predictions[index].description));
@@ -204,22 +206,26 @@ class _CabsSearchFormState extends State<CabsSearchForm> {
               width: double.infinity,
               child: ElevatedButton(
                onPressed: () {
-  final bloc = context.read<FlightSearchBloc>();
-  bloc.add(FetchFlights(
-    from: fromController.text,
-    to: toController.text,
-    departureDate: departureDateController.text,
-    returnDate: context.read<FlightTypeCubit>().state == FlightType.roundTrip 
-        ? returnDateController.text 
-        : null,
-    passengers: int.tryParse(passengersController.text) ?? 1,
-  ));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return MapsPage();
+                },));
+  // final bloc = context.read<FlightSearchBloc>();
+  // bloc.add(FetchFlights(
+  //   from: fromController.text,
+  //   to: toController.text,
+  //   departureDate: departureDateController.text,
+  //   returnDate: context.read<FlightTypeCubit>().state == FlightType.roundTrip 
+  //       ? returnDateController.text 
+  //       : null,
+  //   passengers: int.tryParse(passengersController.text) ?? 1,
+  // ));
 },
 
                 child: Text("Search Flights", style: TextStyle(fontSize: 18.sp)),
               ),
             ),
-                  FlightResultsWidget(),
+                //  FlightResultsWidget(),
+                  
 
           ],
         );

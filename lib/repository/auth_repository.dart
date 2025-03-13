@@ -6,31 +6,32 @@ import 'package:http/http.dart' as http;
 class AuthRepo {
 
 Future<String?> signInUser(String userName, String password)async {
- const loginUrl = 'https://api.transitco.in/auth/login';
+ const loginUrl = 'https://transit-be.vercel.app/api/user/login/email';
  try{
-  // final loginResponse = await http.post(
-  //     Uri.parse(loginUrl),
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode({
-  //       'identifier': userName,
-  //       'password':password
-  //     }),
-  //   );
-  //   print(loginResponse.body.toString());
+  final loginResponse = await http.post(
+      Uri.parse(loginUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': userName,
+        'password':password
+      }),
+    );
+    print(loginResponse.body.toString());
     if(
-      //loginResponse.statusCode == 200   // TODO: Remove comment in prod
-      true
+      loginResponse.statusCode == 200   // TODO: Remove comment in prod
+      
     ){
     return null;
     }else{
-  //return json.decode(loginResponse.body)['message'];
+  return json.decode(loginResponse.body)['message'];
     }
 
 
- }catch (e){}
+ }catch (e){
+  rethrow;
+ }
 
-  await Future.delayed(const Duration(seconds: 1));
-  return Future.value();
+ 
  }
 
 
@@ -59,7 +60,7 @@ Future<void> sendOtp(String? phoneNumber, String? email) async{
 
 
 Future<void> registerUser(String userName, String password, String name, String phoneNumber,int otp) async {
-  const registerUrl = 'https://api.transitco.in/auth/otp/signup';
+  const registerUrl = 'https://transit-be.vercel.app/api/user/register/email';
 
   try {
     // Step 1: Request OTP

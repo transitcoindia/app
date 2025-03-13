@@ -90,7 +90,23 @@ class HomeScreen extends StatelessWidget {
                   return SizedBox(width: 1.w,);
                 }, itemCount: 5),
               ),
-
+ BlocListener<LocationBloc,LocationState>(
+              listener: (context, state) {
+             },
+              child: BlocBuilder<LocationBloc, LocationState>(
+              builder: (context, state) {
+                if(state.currentLocation!= null) {
+          // Pass state.currentPosition as a parameter to MyLocation widget
+                return Column(
+          children: [
+           Text( context.read<LocationBloc>().locationString + 'my add' + state.locationString.toString()),
+            MyLocation(position: state.currentLocation!.latitude.toString() +state.currentLocation!.longitude.toString() ),
+          ],
+                );
+                }else{
+          return Text("Not tracking locatin");
+                }
+              },)),
           Text("Hello"),
         ],
       )),
