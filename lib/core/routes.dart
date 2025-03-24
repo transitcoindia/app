@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,23 +37,21 @@ return GoRouter(
 ),
 
   redirect: (context, state) {
-    // if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
-    // && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
-    // )) {
-    //   return '/preLogin';
-    // } 
-    //   else if (authBloc.state is WaitforOtp ) {
-    //   debugPrint("rerouting here to OTP");
-    //   return '/otp';
-    // }
-    // else if (authBloc.state is AuthError){
-    //   return null;
-    // }
-    // else if (authBloc.state is AuthAuthenticated && state.matchedLocation == '/login') {
-    //   return '/home';
-    // }
+    log("Auth state is ${authBloc.isAuthenticated==true}");
+    if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
+    && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
+    )) {
+      return '/preLogin';
+    } 
 
-   return null;
+    else if (authBloc.state is AuthError){
+      return null;
+    }
+    else if (authBloc.isAuthenticated==true && state.matchedLocation == '/login') {
+      return '/home';
+    }
+
+  
     // // Redirect to home if authenticated and trying to access login page
     // if (authState is AuthAuthenticated && state.fullPath == '/login') {
     //   return '/';

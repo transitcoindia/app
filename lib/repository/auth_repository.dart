@@ -24,40 +24,45 @@ Future<String?> signInUser(String userName, String password)async {
      log(loginResponse.statusCode.toString());
 
   final Map<String, dynamic> responseData = jsonDecode(loginResponse.body);
- var token =null;
-if (responseData.containsKey('token')) {
-   token = responseData['token'];
-  print("Token: $token");
+  print(responseData);
+//  var token =null;
+if (loginResponse.statusCode==200) {
+  //  token = responseData['token'];
+  // print("Token: $token");
+  return null;
 
 } 
  else if (loginResponse.statusCode==403){
         print('Failed to login user: ${loginResponse.body}');
         return "notVerified";
       }
-else {
-  print("Token not found in response.");
-}
+      else if (loginResponse.statusCode==401){
+        print('Failed to login user: ${loginResponse.body}');
+        return responseData['error'];
+      }
 
-    if(
-      loginResponse.statusCode == 200 && token!=null  // TODO: Remove comment in prod
+
+//     if(
+//       loginResponse.statusCode == 200 / TODO: Remove comment in prod
         
 
-    ){
-      log(responseData.containsKey('user').toString());
-log(responseData['user'].containsKey('id').toString());
-   final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("password", password);
-      await prefs.setString(_authTokenKey, token);
-      await prefs.setString("email",userName);
-      await prefs.setString("userId",responseData['user']['id']);
-    return responseData['user']['id'];
-    }else{
-      throw(json.decode(loginResponse.body)['error']);
+//     ){
+// //       log(responseData.containsKey('user').toString());
+// // log(responseData['user'].containsKey('id').toString());
+//   //  final prefs = await SharedPreferences.getInstance();
+//   //     await prefs.setString("password", password);
+//   //     await prefs.setString(_authTokenKey, token);
+//   //     await prefs.setString("email",userName);
+//   //     await prefs.setString("userId",responseData['user']['id']);
+//     // return responseData['user']['id'];
+//     }else{
+//       throw(json.decode(loginResponse.body)['error']);
    
-    }
+//     }
 
 
  }catch (e){
+  print("Is it coming in eroror for no reason");
   rethrow;
  }
 

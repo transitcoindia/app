@@ -77,35 +77,27 @@ on<AuthRequestOtp>((event, emit)async {
     on<AuthLoginEvent>(
       (event, emit) async {
         try {
-          emit(AuthLoading());
+          // emit(AuthLoading());
           // debugPrint("should be in loading now");
           // Call the login function and await its completion
+          final res = 
           await authRepo
               .signInUser(event.email, event.password)
-              .then(
-                (value) {
-                if(value=='notVerified'){
+         
+             ;
+           
+        log(res==null?"True":"False");
+                if(res=='notVerified'){
                   emit(AuthEmailVerify());
-                }else if( value == null)
-             {      emit(AuthAuthenticated());
+                }else if( res == null)
+
+             {  
+              log("Emit correc state");
+                  emit(AuthAuthenticated());
               isAuthenticated = true;
 
-                    userBloc.add(LoadUser(value!));
+                    //userBloc.add(LoadUser(res!));
 }
-              
-              
-                },
-              ).onError(
-                (error, stackTrace) {
-                  emit(AuthError(errorMessage: error.toString()));
-                },
-              )
-              .whenComplete(
-            () {
-              // debugPrint("loaded");
-             
-            },
-          );
 
           // After the successful login, emit the authenticated state
         } catch (error) {

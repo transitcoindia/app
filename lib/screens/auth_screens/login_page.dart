@@ -150,6 +150,8 @@ String? validateEmail(String? value) {
                           ),
                         );
               }
+            }else if(state is AuthAuthenticated){
+              GoRouter.of(context).push('/home');
             }
           },
             child: TextButton(
@@ -157,6 +159,7 @@ String? validateEmail(String? value) {
                 
                 if (_formKey.currentState!.validate()) {
                 context.read<AuthBloc>().add(AuthLoginEvent(email: _userNameController.text, password: _passwordController.text));
+                GoRouter.of(context).push('/home');
                 }
               },
               style: TextButton.styleFrom(

@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (previous, current) {
-          if (current is AuthLoading || current is AuthError || current is AuthEmailVerify) {
+          if (current is AuthLoading || current is AuthError ) {
             debugPrint("ahksdfhsdaf");
             return false;
           } else {

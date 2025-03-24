@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,9 +36,12 @@ class CustomNavBar extends StatelessWidget {
         },
         child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/explore.png'),)),
       BlocBuilder<AuthBloc,AuthState>(builder: (context, state) {
+        log(state.toString());
         return InkWell(
           onTap: () {
-            if(state is AuthLoggedIn){
+                    print(state.toString());
+
+            if(state is AuthAuthenticated){
 GoRouter.of(context).push('/profile');
             }
            else{
