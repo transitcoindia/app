@@ -23,3 +23,5 @@ class AuthError extends AuthState {
   const AuthError({required this.errorMessage});
   final String errorMessage;
 }
+
+class AuthEmailVerify extends AuthState{}

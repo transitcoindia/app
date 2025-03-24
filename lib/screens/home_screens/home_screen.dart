@@ -18,24 +18,26 @@ class HomeScreen extends StatelessWidget {
   final TextEditingController placeNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(extendBody: true,          resizeToAvoidBottomInset: false, // Prevents auto-resizing that may cause gaps
+    return Scaffold(
+      extendBody: true,
+      resizeToAvoidBottomInset:
+          false, // Prevents auto-resizing that may cause gaps
 
       bottomNavigationBar: AnimatedSwitcher(
-      duration: Duration(milliseconds: 300), // ✅ Animation duration
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
-      child:  SizedBox(
-              key: ValueKey('bnb'), // ✅ Unique key for animation
-              height: 80.h,
-              child: CustomNavBar(
-                // currentIndex: _selectedIndex,
-                // onTap: _onItemTapped,
+        duration: Duration(milliseconds: 300), // ✅ Animation duration
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        child: SizedBox(
+          key: ValueKey('bnb'), // ✅ Unique key for animation
+          height: 80.h,
+          child: CustomNavBar(
+              // currentIndex: _selectedIndex,
+              // onTap: _onItemTapped,
               ),
-            )
-          , // ✅ Animates disappearing
-    ),
+        ), // ✅ Animates disappearing
+      ),
       backgroundColor: white,
       body: Center(
           child: Column(
@@ -63,50 +65,61 @@ class HomeScreen extends StatelessWidget {
                   // SizedBox(height: 0.h,)
                 ],
               )),
-              SizedBox(height: 75.h,
-                child: ListView.separated(shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
+          SizedBox(
+            height: 75.h,
+            child: ListView.separated(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
                   return TransportTypeBox(
-                    
-                    onTap: () {
-                      switch(index){
-                        case 0://cabs
-                        GoRouter.of(context).push('/cabs');
-                        break;
-                         case 1://flights
-                         GoRouter.of(context).push('/flights');
-                        break;
-                         case 2://trains
-                        break;
-                         case 3://busses
-                        break;
-                         case 4://stays
-                        break;
-                      }
-                    },
-                    label:transportNames[index], assetPath:serviceTypeAssetString[index]);
-                }, separatorBuilder: (context, index) {
-                  return SizedBox(width: 1.w,);
-                }, itemCount: 5),
-              ),
- BlocListener<LocationBloc,LocationState>(
-              listener: (context, state) {
-             },
+                      onTap: () {
+                        switch (index) {
+                          case 0: //cabs
+                            GoRouter.of(context).push('/cabs');
+                            break;
+                          case 1: //flights
+                            GoRouter.of(context).push('/flights');
+                            break;
+                          case 2: //trains
+                            break;
+                          case 3: //busses
+                            break;
+                          case 4: //stays
+                            break;
+                        }
+                      },
+                      label: transportNames[index],
+                      assetPath: serviceTypeAssetString[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(
+                    width: 1.w,
+                  );
+                },
+                itemCount: 5),
+          ),
+          BlocListener<LocationBloc, LocationState>(
+              listener: (context, state) {},
               child: BlocBuilder<LocationBloc, LocationState>(
-              builder: (context, state) {
-                if(state.currentLocation!= null) {
-          // Pass state.currentPosition as a parameter to MyLocation widget
-                return Column(
-          children: [
-           Text( context.read<LocationBloc>().locationString + 'my add' + state.locationString.toString()),
-            MyLocation(position: state.currentLocation!.latitude.toString() +state.currentLocation!.longitude.toString() ),
-          ],
-                );
-                }else{
-          return Text("Not tracking locatin");
-                }
-              },)),
+                builder: (context, state) {
+                  if (state.currentLocation != null) {
+                    // Pass state.currentPosition as a parameter to MyLocation widget
+                    return Column(
+                      children: [
+                        Text(context.read<LocationBloc>().locationString +
+                            'my add' +
+                            state.locationString.toString()),
+                        MyLocation(
+                            position: state.currentLocation!.latitude
+                                    .toString() +
+                                state.currentLocation!.longitude.toString()),
+                      ],
+                    );
+                  } else {
+                    return Text("Not tracking locatin");
+                  }
+                },
+              )),
           Text("Hello"),
         ],
       )),

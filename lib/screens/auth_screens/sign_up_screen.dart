@@ -49,7 +49,9 @@ String? validateNumber(String? phoneNumber) {
   return null; // If all checks pass
 }
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+    final TextEditingController _lastNameController = TextEditingController();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -90,101 +92,14 @@ String? validateNumber(String? phoneNumber) {
             child: Text("${type=='email'?'Email':'Mobile'}", style: TextStyle(fontSize: 12.sp)),
           ),
              SizedBox(height: 5.h),
-             TextFormField(//keyboardType: ,
-      validator:(value) {
-        if(value ==null || value.length==0){
-          return 'Name cannot be empty';
+     AuthTextField(controller: _firstNameController, hintText: "First name", isEnabled:_firstNameController.text.length>0 , validator: (vlaie){}),
+          AuthTextField(controller: _lastNameController, hintText: "Last name", isEnabled:_firstNameController.text.length>0 , validator: (vlaie){}),
+     AuthTextField(controller: _emailController, hintText: "Email", isEnabled:_firstNameController.text.length>0 , validator: (vlaie){}),
+     AuthTextField(controller: _passwordController, hintText: "Password", isEnabled:_firstNameController.text.length>0 , validator: (vlaie){}),
+     AuthTextField(controller: _confirmPasswordController, hintText: "Confirm password", isEnabled:_firstNameController.text.length>0 , validator: (vlaie){}),
 
-        }
-        return null;
-      },
-      controller:_nameController,
-      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
-        filled: true,
-        fillColor: true ? enabledFillColor : white, // ✅ Ensure correct background fill
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none, // ✅ Remove unwanted default border
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Apply correct enabled border
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Ensure focused border is correct
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
-        hintText:"name",
-        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
-      ),
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
-    ),
-   ValueListenableBuilder<bool>(
-  valueListenable: _isButtonEnabled,
-  builder: (context, isEnabled, child) {
-    return TextFormField(keyboardType: type=='email'?TextInputType.emailAddress:TextInputType.number,
-      validator:type=='email'? validateEmail:validateNumber,
-      controller:type=='email'? _emailController:_phoneController,
-      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
-        filled: true,
-        fillColor: isEnabled ? enabledFillColor : white, // ✅ Ensure correct background fill
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none, // ✅ Remove unwanted default border
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: isEnabled ? enabledBorderColor : borderColor, width: 1.5), // ✅ Apply correct enabled border
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: isEnabled ? enabledBorderColor : borderColor, width: 1.5), // ✅ Ensure focused border is correct
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
-        hintText:" ${type=='email'?'Email':'Mobile Number'}",
-        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
-      ),
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
-    );
-  },
-),
-TextFormField(//keyboardType: ,
-      validator:validateEmail,
-      controller:_passwordController,
-      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
-        filled: true,
-        fillColor: true ? enabledFillColor : white, // ✅ Ensure correct background fill
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none, // ✅ Remove unwanted default border
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Apply correct enabled border
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: true ? enabledBorderColor : borderColor, width: 1.5), // ✅ Ensure focused border is correct
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
-        hintText:"password",
-        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
-      ),
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
-    ),
+  
+
 
              SizedBox(height: 50.h),
  ValueListenableBuilder<bool>(
@@ -208,7 +123,12 @@ TextFormField(//keyboardType: ,
                     // email: _emailController.text,
                     // mobile: _phoneController.text));
 // if(_formKey.currentState!.validate())
-context.read<AuthBloc>().add(RegisterUserEvent(name: _nameController.text, email: _emailController.text,  password: _passwordController.text,));
+context.read<AuthBloc>().add(RegisterUserEvent(firstName: _firstNameController.text,lastName: _lastNameController.text,
+
+  
+ email: _emailController.text,  password: _passwordController.text,  
+ confirmPassword: _confirmPasswordController.text
+ ));
                     
                           } : null,
                           fontsize: 20.sp,
@@ -228,6 +148,46 @@ context.read<AuthBloc>().add(RegisterUserEvent(name: _nameController.text, email
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class AuthTextField extends StatelessWidget {
+  const AuthTextField({super.key,required  this.controller,required this.hintText,required this.isEnabled, required this.validator});
+final TextEditingController controller;
+final String hintText;
+final bool isEnabled;
+final String? Function(String?)? validator;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator:validator,
+      controller:controller,
+      decoration: InputDecoration(labelStyle: TextStyle(fontSize: 3.sp),
+        filled: true,
+        fillColor: isEnabled ? enabledFillColor : white, // ✅ Ensure correct background fill
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none, // ✅ Remove unwanted default border
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: isEnabled ? enabledBorderColor : borderColor, width: 1.5), // ✅ Apply correct enabled border
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: isEnabled ? enabledBorderColor : borderColor, width: 1.5), // ✅ Ensure focused border is correct
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        hintText:hintText,
+        hintStyle:  TextStyle(color: const Color.fromARGB(255, 62, 62, 62), fontSize: 12.sp, fontWeight: FontWeight.w100),
+      ),
+      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
     );
   }
 }

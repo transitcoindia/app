@@ -35,18 +35,22 @@ class AuthErrorEvent extends AuthEvent {
 }
 
 class RegisterUserEvent extends AuthEvent {
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   // final String phone;
   final String password;
+  final String confirmPassword;
   // final int otp;
 
 
   const RegisterUserEvent({
-    required this.name,
+    required this.firstName,
     required this.email,
-    // required this.phone,
+    required this.lastName,
     required this.password,
+        required this.confirmPassword,
+
     // required this.otp
    
   });
@@ -63,7 +67,11 @@ class SubmitOtp extends AuthEvent {
   });
 }
 
+class AuthSendVerificationEmail extends AuthEvent {
+final String email;
+AuthSendVerificationEmail({ required  this.email});
 
+}
 
 
 class AuthLogout extends AuthEvent {}

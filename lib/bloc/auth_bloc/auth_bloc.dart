@@ -84,12 +84,14 @@ on<AuthRequestOtp>((event, emit)async {
               .signInUser(event.email, event.password)
               .then(
                 (value) {
-                
-                   emit(AuthAuthenticated());
+                if(value=='notVerified'){
+                  emit(AuthEmailVerify());
+                }else if( value == null)
+             {      emit(AuthAuthenticated());
               isAuthenticated = true;
 
                     userBloc.add(LoadUser(value!));
-
+}
               
               
                 },
@@ -116,9 +118,10 @@ on<AuthRequestOtp>((event, emit)async {
   on<RegisterUserEvent>((event, emit) async {
     emit(AuthLoading());
     try {
- final res= await authRepo.registerUser(event.email,event.password,event.name);
+ final res= await authRepo.registerUser(event.firstName,event.lastName,event.email,event.password,event.confirmPassword);
 if(res==null)
 { emit(AuthAuthenticated());}
+
 else{
   emit(AuthError(errorMessage: res));
 
@@ -131,7 +134,14 @@ else{
 }
   },);
 
-
+on<AuthSendVerificationEmail>((event, emit) async{
+  try {
+ var res =  await authRepo.sendVerifyEmail(event.email);
+ 
+} catch (e) {
+  emit(AuthError(errorMessage: "Unable to send verification email"));
+}
+});
 on<AuthLogout>((event, emit)async {
   await authRepo.logout();
   debugPrint("I am emitting the unauth state");

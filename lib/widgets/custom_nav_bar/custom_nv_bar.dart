@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:transit/bloc/auth_bloc/auth_event.dart';
+import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/core/theme/colors.dart';
 
 class CustomNavBar extends StatelessWidget {
@@ -32,11 +33,21 @@ class CustomNavBar extends StatelessWidget {
            context.read<AuthBloc>().add(AuthLogout());
         },
         child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/explore.png'),)),
-      InkWell(
-        onTap: () {
-         GoRouter.of(context).push('/profile');
-        },
-        child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/profile.png'),)),
+      BlocBuilder<AuthBloc,AuthState>(builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            if(state is AuthLoggedIn){
+GoRouter.of(context).push('/profile');
+            }
+           else{
+            GoRouter.of(context).push('/login');
+
+           }
+          },
+          child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/profile.png'),));
+      },
+       
+      ),
             
             ],),),
     );

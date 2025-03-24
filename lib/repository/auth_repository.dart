@@ -5,22 +5,23 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+final String endpoint = 'https://api.transitco.in';
 class AuthRepo {
     static const String _authTokenKey = 'authToken';
 
 Future<String?> signInUser(String userName, String password)async {
- const loginUrl = 'https://transit-be.vercel.app/api/user/login/email';
+ String loginUrl = '${endpoint}/api/auth/login';
  try{
   final loginResponse = await http.post(
       Uri.parse(loginUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'email': userName,
+        'identifier': userName,
         'password':password
       }),
     );
-    //  log(loginResponse.body.toString());
-    //  log(loginResponse.statusCode.toString());
+     log(loginResponse.body.toString());
+     log(loginResponse.statusCode.toString());
 
   final Map<String, dynamic> responseData = jsonDecode(loginResponse.body);
  var token =null;
@@ -28,7 +29,12 @@ if (responseData.containsKey('token')) {
    token = responseData['token'];
   print("Token: $token");
 
-} else {
+} 
+ else if (loginResponse.statusCode==403){
+        print('Failed to login user: ${loginResponse.body}');
+        return "notVerified";
+      }
+else {
   print("Token not found in response.");
 }
 
@@ -46,7 +52,7 @@ log(responseData['user'].containsKey('id').toString());
       await prefs.setString("userId",responseData['user']['id']);
     return responseData['user']['id'];
     }else{
-      throw(json.decode(loginResponse.body)['message']);
+      throw(json.decode(loginResponse.body)['error']);
    
     }
 
@@ -83,8 +89,8 @@ Future<void> sendOtp(String? phoneNumber, String? email) async{
 
 
 
-Future<String?> registerUser(String userName, String password, String name,) async {
-  const registerUrl = 'https://transit-be.vercel.app/api/user/register/email';
+Future<String?> registerUser(String firstName, String lastName, String email, String password,String confirmPassword) async {
+  String registerUrl = '${endpoint}/api/auth/register';
 
   try {
     // Step 1: Request OTP
@@ -95,18 +101,24 @@ Future<String?> registerUser(String userName, String password, String name,) asy
         Uri.parse(registerUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'name': name,
-          // 'mobile': phoneNumber,
-          'email': userName,
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
           'password': password,
+          'confirmPassword': confirmPassword
+
           // 'otp': otp.toString(),
         }),
       );
 log(response.toString());
-      if (response.statusCode == 200) {
+log(response.body.toString());
+log(response.statusCode.toString());
+      if (response.statusCode == 201) {
         print('User registered successfully: ${response.body}');
         return null;
-      } else {
+      } 
+     
+      else {
         print('Failed to register user: ${response.body}');
         return response.body.toString();
       }
@@ -135,6 +147,45 @@ log(response.toString());
       await prefs.remove("password");
       await prefs.remove(_authTokenKey);
       await prefs.remove("email");
+  }
+
+ Future<String?> sendVerifyEmail(String email) async{
+  String registerUrl = '${endpoint}/api/auth/verify-email';
+
+  try {
+    // Step 1: Request OTP
+   
+    
+      // Step 2: Register User
+      final response = await http.post(
+        Uri.parse(registerUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+    
+          'email': email,
+
+          // 'otp': otp.toString(),
+        }),
+      );
+log(response.toString());
+log(response.body.toString());
+log(response.statusCode.toString());
+      if (response.statusCode == 201) {
+        print('Email verify email sent successfully: ${response.body}');
+        return null;
+      } 
+     
+      else {
+        print('Failed to register user: ${response.body}');
+        return response.body.toString();
+      }
+
+    
+  } catch (e) {
+    print('An error occurred: $e');
+    return 'Error occoured';
+  }
+
   }
 
 }

@@ -44,8 +44,8 @@ String? validateEmail(String? value) {
 
             child: SizedBox(height: 20.h,width: 20.w,child: Image.asset('assets/general_icons/back_button.png'),)),
            SizedBox(height: 10.h),
-           Text("Continue with Email"),
-           Text("Sign up with your email."),
+           Text("Login with email"),
+           Text("."),
            Align(
             alignment: Alignment.centerLeft,
             child: Text("Email", style: TextStyle(fontSize: 12.sp)),
@@ -106,7 +106,31 @@ String? validateEmail(String? value) {
                           barrierDismissible: false,
                           builder: (context) => const Center(child: CircularProgressIndicator()),
                         );
-            } else if (state is AuthError){
+            }
+            
+            else if(state is AuthEmailVerify){
+                showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) =>  Dialog(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Text("Please check your email inbox to verify your email", style: TextStyle(color: black),),
+                                  ElevatedButton(onPressed: (){
+                                 Navigator.of(context).pop();
+                                  }, child: Text("Ok")),
+                                   ElevatedButton(onPressed: (){
+                                context.read<AuthBloc>().add(AuthSendVerificationEmail(email: _userNameController.text));
+                                  }, child: Text("Resend verify email"))
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+            }
+            
+             else if (state is AuthError){
               if(Navigator.canPop(context)){
                 Navigator.of(context).pop();
                 showDialog(
