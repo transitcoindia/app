@@ -75,3 +75,4 @@ AuthSendVerificationEmail({ required  this.email});
 
 
 class AuthLogout extends AuthEvent {}
+class ForgotPassword extends AuthEvent {}

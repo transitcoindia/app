@@ -44,7 +44,8 @@ String? validateEmail(String? value) {
 
             child: SizedBox(height: 20.h,width: 20.w,child: Image.asset('assets/general_icons/back_button.png'),)),
            SizedBox(height: 10.h),
-           Text("Login with email"),
+           Text("Welcome", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),),
+           Text("Back!", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),),
            Text("."),
            Align(
             alignment: Alignment.centerLeft,
@@ -66,7 +67,7 @@ String? validateEmail(String? value) {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: Colors.red),
               ),
-              hintText: 'Username is your email',
+              hintText: '',
               hintStyle: const TextStyle(color: Colors.grey),
             ),
             style: const TextStyle(color: Colors.black),
@@ -93,11 +94,16 @@ String? validateEmail(String? value) {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: Colors.red),
               ),
-              hintText: 'Enter your password',
+              hintText: '',
               hintStyle: const TextStyle(color: Colors.grey),
             ),
             style: const TextStyle(color: Colors.black),
           ),
+          InkWell(
+            onTap: () {
+              // context.read<AuthBloc>().add(Password)
+            },
+            child: SizedBox(child: Text("Forgot Password?"),)),
           const SizedBox(height: 30),
           BlocListener<AuthBloc,AuthState>(listener: (context, state) {
             if(state is AuthLoading){

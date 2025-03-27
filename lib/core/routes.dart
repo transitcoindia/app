@@ -38,13 +38,13 @@ return GoRouter(
 
   redirect: (context, state) {
     log("Auth state is ${authBloc.isAuthenticated==true}");
-    if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
-    && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
-    )) {
-      return '/preLogin';
-    } 
+    // if (authBloc.state is AuthUnauthenticated && (state.matchedLocation != '/login' && state.matchedLocation != '/register'
+    // && state.matchedLocation != '/loginType'  && state.matchedLocation != '/signUp'
+    // )) {
+    //   return '/preLogin';
+    // } 
 
-    else if (authBloc.state is AuthError){
+     if (authBloc.state is AuthError){
       return null;
     }
     else if (authBloc.isAuthenticated==true && state.matchedLocation == '/login') {

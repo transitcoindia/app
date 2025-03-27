@@ -44,10 +44,10 @@ class CabsHome extends StatelessWidget {
             children: [
             
               SizedBox(height: 20.h),
-              const CabsSearchForm(),
-              Container(
-                color: Colors.pink,height: 450,
-                child: MapScreen())
+               SearchPage(),
+              // Container(
+              //   color: Colors.pink,height: 450,
+              //   child: MapScreen())
             ],
           ),
         ),

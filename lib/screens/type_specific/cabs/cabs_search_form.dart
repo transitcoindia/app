@@ -1,269 +1,167 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:intl/intl.dart';
-import 'package:transit/bloc/autocomplete_bloc.dart/acomp_bloc.dart';
-import 'package:transit/bloc/autocomplete_bloc.dart/acomp_event.dart';
-import 'package:transit/bloc/autocomplete_bloc.dart/acompstate.dart';
-import 'package:transit/bloc/flights_bloc/flight_bloc.dart';
-import 'package:transit/bloc/maps_bloc/maps_bloc.dart';
-import 'package:transit/bloc/maps_bloc/maps_event.dart';
-import 'package:transit/cubits/flights_cubit/flight_det_cubit.dart';
-import 'package:transit/screens/home_screens/maps_page.dart';
-import 'package:transit/screens/map/empty_maps.dart';
-import 'package:transit/screens/map/map_widget.dart';
-import 'package:transit/screens/type_specific/flights/search_results.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:transit/screens/type_specific/cabs/search.dart';
 
-class CabsSearchForm extends StatefulWidget {
-  const CabsSearchForm({super.key});
+const String kGoogleApiKey = "AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc"; // Replace with your key
 
+class SearchPage extends StatefulWidget {
   @override
-  _CabsSearchFormState createState() => _CabsSearchFormState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _CabsSearchFormState extends State<CabsSearchForm> {
+class _SearchPageState extends State<SearchPage> {
   final TextEditingController fromController = TextEditingController();
   final TextEditingController toController = TextEditingController();
-  final TextEditingController departureDateController = TextEditingController();
-  final TextEditingController returnDateController = TextEditingController();
-  final TextEditingController passengersController = TextEditingController(text: "1");
+  
+  Map<String, double>? fromLocation;
+  Map<String, double>? toLocation;
+  
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
 
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
-    DateTime? picked = await showDatePicker(
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
+
     if (picked != null) {
       setState(() {
-        controller.text = DateFormat.yMMMd().format(picked);
+        log("Picked da ${picked!.day}");
+        selectedDate = picked;
+                log("Picked da ${selectedDate!.day}");
+
       });
     }
   }
 
+  void _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        log("Picked da ${picked!.toString()}");
+        selectedTime = picked;
+                log("Picked da ${selectedTime!.toString()}");
+
+      });
+    }
+  }
+
+  void _searchRides() {
+    if (fromController.text.isEmpty ||
+        toController.text.isEmpty ||
+        selectedDate == null ||
+        selectedTime == null ||
+        fromLocation == null ||
+        toLocation == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill all fields correctly")),
+      );
+      return;
+    }
+                log("Picked da ${selectedDate!.day}");
+                log("Picked da ${selectedTime!.toString()}");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChooseRideScreen(
+          fromAddress: fromController.text,
+          toAddress: toController.text,
+          fromLocation: fromLocation!,
+          toLocation: toLocation!,
+          selectedDate: selectedDate!,
+          selectedTime: selectedTime!,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FlightTypeCubit, FlightType>(
-      builder: (context, flightType) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return  Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
-            _buildTextField(
-              topHelperText: "(This will help our driver reach out to you)",
-              topText: "Pick-up Address",
-              label: "Enter exact pick up address", controller: fromController,onChanged: (value){
-                   Future.delayed(Durations.long1);
-                    context
-                        .read<AutocompleteBloc>()
-                        .add(FetchSuggestions(value,Pos.source));
-            }),
-            BlocBuilder<AutocompleteBloc, AutocompleteState>(
-          builder: (context, state) {
-            if (state is AutocompleteLoadedSource ) {
-              return Container(
-                constraints: const BoxConstraints(minHeight: 0, maxHeight: 150),
-                child: SingleChildScrollView(
-                  child: Column(
-                      children: List.generate(
-                    state.predictions.length,
-                    (index) {
-                      return GestureDetector(
-                        onTap: () {
-
-                          if(GoRouter.of(context)
-                          .state!.fullPath.toString() ==
-                      '/home'){
-                        // print(GoRouter.of(context)
-                        //   .state!.fullPath.toString()
-                        //    + "is my current");
-// context.push('/page1');         print("LKJHKJHKJHKJHKHK");           
-  }
-                          fromController.text =
-                              state.predictions[index].description;
-                          context
-                              .read<AutocompleteBloc>()
-                              .add(CompletedSuggestion());
-   context.read<MapBloc>().add(ChangeSource(query:  state.predictions[index].description,
-                            placeId:   state.predictions[index].placeId,
-                              ));;
-                        },
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Card(
-                            // color: const Color.fromARGB(63, 96, 96, 96),
-                            elevation: 20,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(state.predictions[index].description),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )),
-                ),
-              );
-            } else if (state is Completed) {
-              return const SizedBox();
-            } else if (state is AutocompleteInitial) {
-              return const SizedBox();
-            } else if (state is AutocompleteLoading && state.pos==Pos.source) {
-              return const CircularProgressIndicator();
-            }
-            else{
-              return SizedBox();
-            }
-          },
-        ),
-            SizedBox(height: 10.h),
-            _buildTextField(topHelperText: "(This will help to avoid extra charges)",
-              topText: "Drop off Addrress",
-              label: "Enter exact drop off address", controller: toController,
-              onChanged: (value){
-                   Future.delayed(Durations.long1);
-                    context
-                        .read<AutocompleteBloc>()
-                        .add(FetchSuggestions(value,Pos.destination));
-            }
+            GooglePlaceAutoCompleteTextField(
+              textEditingController: fromController,
+              googleAPIKey: kGoogleApiKey,
+              inputDecoration: InputDecoration(
+                labelText: "From Location",
+                suffixIcon: Icon(Icons.search),
               ),
-               BlocBuilder<AutocompleteBloc, AutocompleteState>(
-          builder: (context, state) {
-            if (state is AutocompleteLoadedDestination ) {
-              return Container(
-                constraints: const BoxConstraints(minHeight: 0, maxHeight: 150),
-                child: SingleChildScrollView(
-                  child: Column(
-                      children: List.generate(
-                    state.predictions.length,
-                    (index) {
-                      return GestureDetector(
-                        onTap: () {
-
-                          if(GoRouter.of(context)
-                          .state!.fullPath.toString() ==
-                      '/home'){
-                        // print(GoRouter.of(context)
-                        //   .state!.fullPath.toString()
-                        //    + "is my current");
-// context.push('/page1');         print("LKJHKJHKJHKJHKHK");           
-  }
-                          toController.text =
-                              state.predictions[index].description;
-                          context
-                              .read<AutocompleteBloc>()
-                              .add(CompletedSuggestion());
-                          context.read<MapBloc>().add(FindRoute(
-                              state.predictions[index].placeId,
-                              state.predictions[index].description));
-                        },
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Card(
-                            // color: const Color.fromARGB(63, 96, 96, 96),
-                            elevation: 20,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(state.predictions[index].description),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )),
-                ),
-              );
-            } else if (state is Completed) {
-              return const SizedBox();
-            } else if (state is AutocompleteInitial) {
-              return const SizedBox();
-            } else if (state is AutocompleteLoading && state.pos==Pos.destination) {
-              return const CircularProgressIndicator();
-            }
-            else{
-              return SizedBox();
-            }
-          },
-        ),
-            SizedBox(height: 10.h),
-            _buildDateField(label: "Departure Date", controller: departureDateController),
-            if (flightType == FlightType.roundTrip) ...[
-              SizedBox(height: 10.h),
-              _buildDateField(label: "Return Date", controller: returnDateController),
-            ],
-            SizedBox(height: 10.h),
-            // _buildTextField(label: "Passengers", controller: passengersController, keyboardType: TextInputType.number),
-            SizedBox(height: 20.h),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return MapsPage();
-                },));
-  // final bloc = context.read<FlightSearchBloc>();
-  // bloc.add(FetchFlights(
-  //   from: fromController.text,
-  //   to: toController.text,
-  //   departureDate: departureDateController.text,
-  //   returnDate: context.read<FlightTypeCubit>().state == FlightType.roundTrip 
-  //       ? returnDateController.text 
-  //       : null,
-  //   passengers: int.tryParse(passengersController.text) ?? 1,
-  // ));
-},
-
-                child: Text("Search Cabs", style: TextStyle(fontSize: 18.sp)),
-              ),
+              debounceTime: 800,
+              countries: ["IN"],
+              isLatLngRequired: true,
+              getPlaceDetailWithLatLng: (Prediction prediction) {
+                fromLocation = {
+                  "lat": double.parse(prediction.lat!),
+                  "lng": double.parse(prediction.lng!)
+                };
+              },
+              itemClick: (Prediction prediction) {
+                fromController.text = prediction.description!;
+                fromController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: fromController.text.length),
+                );
+              },
             ),
-                //  FlightResultsWidget(),
-                  
-
+            SizedBox(height: 10),
+            GooglePlaceAutoCompleteTextField(
+              textEditingController: toController,
+              googleAPIKey: kGoogleApiKey,
+              inputDecoration: InputDecoration(
+                labelText: "To Location",
+                suffixIcon: Icon(Icons.search),
+              ),
+              debounceTime: 800,
+              countries: ["IN"],
+              isLatLngRequired: true,
+              getPlaceDetailWithLatLng: (Prediction prediction) {
+                toLocation = {
+                  "lat": double.parse(prediction.lat!),
+                  "lng": double.parse(prediction.lng!)
+                };
+              },
+              itemClick: (Prediction prediction) {
+                toController.text = prediction.description!;
+                toController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: toController.text.length),
+                );
+              },
+            ),
+            SizedBox(height: 10),
+            ListTile(
+              title: Text(selectedDate == null
+                  ? "Select Date"
+                  : DateFormat('yyyy-MM-dd').format(selectedDate!)),
+              trailing: Icon(Icons.calendar_today),
+              onTap: () => _selectDate(context),
+            ),
+            ListTile(
+              title: Text(selectedTime == null
+                  ? "Select Time"
+                  : selectedTime!.format(context)),
+              trailing: Icon(Icons.access_time),
+              onTap: () => _selectTime(context),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _searchRides,
+              child: Text("Find Rides"),
+            ),
           ],
-        );
-      },
-    );
-  }
-
-  Widget _buildTextField({
-    required topText,required topHelperText,
-    required String label, required TextEditingController controller, TextInputType? keyboardType,
- void Function(String)? onChanged
-  }) {
-    return Column(
-      children: [Row(
-        children: [
-          Text(topText, style: TextStyle(fontWeight: FontWeight.w700),),
-          SizedBox(width: 8,),
-          Text(topHelperText, style: TextStyle(fontSize: 8.sp),)
-        ],
-      ),
-        TextFormField(
-          onChanged: onChanged,
-          controller: controller,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
-          ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildDateField({required String label, required TextEditingController controller}) {
-    return TextFormField(
-      controller: controller,
-      readOnly: true,
-      onTap: () => _selectDate(context, controller),
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
-        suffixIcon: Icon(Icons.calendar_today),
-      ),
     );
   }
 }
