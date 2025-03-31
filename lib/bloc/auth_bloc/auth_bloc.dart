@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final authRepo = AuthRepo();
     final UserBloc userBloc; // Inject UserBloc
-
+String? userId;
   bool isAuthenticated = false;
     static const String _authTokenKey = 'authToken';
 
@@ -37,10 +37,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthAuthenticated());
 
   await  authRepo.   signInUser(email!, password!).then((value) {
-   
+    userBloc.add(LoadUser(value!));
       isAuthenticated=true;
       log("Passing $value");
-      userBloc.add(LoadUser(value!));
+     
       log(isAuthenticated.toString());
     
   },);
@@ -93,6 +93,7 @@ on<AuthRequestOtp>((event, emit)async {
 
              {  
               log("Emit correc state");
+              userId=res;
                   emit(AuthAuthenticated());
               isAuthenticated = true;
 

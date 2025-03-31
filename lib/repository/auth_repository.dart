@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 final String endpoint = 'https://api.transitco.in';
 class AuthRepo {
     static const String _authTokenKey = 'authToken';
-
+String? userId;
 Future<String?> signInUser(String userName, String password)async {
  String loginUrl = '${endpoint}/api/auth/login';
  try{
@@ -25,11 +25,12 @@ Future<String?> signInUser(String userName, String password)async {
 
   final Map<String, dynamic> responseData = jsonDecode(loginResponse.body);
   print(responseData);
+  userId=responseData['user']['id'];
 //  var token =null;
 if (loginResponse.statusCode==200) {
   //  token = responseData['token'];
   // print("Token: $token");
-  return null;
+  return responseData['user']['id'];
 
 } 
  else if (loginResponse.statusCode==403){

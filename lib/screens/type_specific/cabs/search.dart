@@ -1,9 +1,14 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
+import 'package:transit/bloc/user_specific/user_bloc.dart/user_bloc.dart';
 import 'dart:convert';
+
+import 'package:transit/screens/type_specific/cabs/payment.dart';
 
 class ChooseRideScreen extends StatefulWidget {
   final String fromAddress;
@@ -12,6 +17,8 @@ class ChooseRideScreen extends StatefulWidget {
   final Map<String, double> toLocation;
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
+  final String fromName;
+  final String toName;
 
   ChooseRideScreen({
     required this.fromAddress,
@@ -20,6 +27,8 @@ class ChooseRideScreen extends StatefulWidget {
     required this.toLocation,
     required this.selectedDate,
     required this.selectedTime,
+    required this.fromName,
+    required this.toName
   });
 
   @override
@@ -49,33 +58,39 @@ String formatTimeOfDay(TimeOfDay time) {
     final apiUrl = "https://api.transitco.in/api/cab/getQuote"; // Replace with actual API URL
     final requestBody = {
       "tripType": 1,
-      "cabType": [1, 2, 3],
+      "cabType": [1,2,14,15,16,72,73,74],
       "routes": [
         {
-          "startDate":DateFormat('yyyy-MM-dd').format(widget.selectedDate),// ,
-          "startTime":formatTimeOfDay(widget.selectedTime),//,
+          "startDate":DateFormat('yyyy-MM-dd').format(widget.selectedDate).toString(),// ,
+          "startTime":formatTimeOfDay(widget.selectedTime).toString(),//,
           "source": {
             "address": widget.fromAddress,
+            "name":widget.fromName,
             "coordinates": {
-              "latitude": widget.fromLocation['lat'],
-              "longitude": widget.fromLocation['lng'],
+              "latitude":22.6531496,// double.parse(widget.fromLocation['lat']!.toStringAsFixed(7)),
+              "longitude": 88.4448719,// double.parse(widget.fromLocation['lng']!.toStringAsFixed(7)),
             }
           },
           "destination": {
             "address": widget.toAddress,
+            "name":widget.toName,
             "coordinates": {
-              "latitude": widget.toLocation['lat'],
-              "longitude": widget.toLocation['lng'],
+              "latitude": 22.7008099,// double.parse(widget.toLocation['lat']!.toStringAsFixed(7)),
+              "longitude":  88.3747597,// double.parse(widget.toLocation['lng']!.toStringAsFixed(7)),
             }
           }
         }
       ]
     };
-log(widget.toLocation['lat'].toString());
-log(widget.toLocation['lng'].toString());
-log(widget.fromLocation['lat'].toString());
-log(widget.fromLocation['lng'].toString());
+log(widget.fromName);
+log(widget.toName);
 
+// log(widget.toLocation['lng'].toString());
+// log(widget.fromLocation['lat'].toString());
+// log(widget.fromLocation['lng'].toString());
+// log(DateFormat('yyyy-MM-dd').format(widget.selectedDate));
+// log(formatTimeOfDay(widget.selectedTime));
+log(requestBody.toString());
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -135,6 +150,10 @@ print(widget.selectedTime.format(context));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Ride selected: ${ride["cab"]["type"]}")),
                               );
+
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                                return RazorpayPaymentPage(userId: "suihdfiashdfisa");
+                              },));
                             },
                             child: Text("Select"),
                           ),

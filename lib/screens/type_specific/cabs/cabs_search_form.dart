@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:intl/intl.dart';
@@ -16,12 +17,29 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController fromController = TextEditingController();
   final TextEditingController toController = TextEditingController();
-  
+  String fromName = '';
+  String toName = '';
   Map<String, double>? fromLocation;
   Map<String, double>? toLocation;
   
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+
+
+Future<String> getPlaceNameFromId(String placeId) async {
+  const String apiKey = kGoogleApiKey;
+  final String url =
+      'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
+
+  final response = await http.get(Uri.parse(url));
+log(response.body);
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    return data['result']['name'] ?? 'Unknown Place';
+  } else {
+    throw Exception('Failed to load place details');
+  }
+}
 
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -75,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChooseRideScreen(
+        builder: (context) => ChooseRideScreen(fromName: fromName,toName: toName,
           fromAddress: fromController.text,
           toAddress: toController.text,
           fromLocation: fromLocation!,
@@ -109,7 +127,10 @@ class _SearchPageState extends State<SearchPage> {
                   "lng": double.parse(prediction.lng!)
                 };
               },
-              itemClick: (Prediction prediction) {
+              itemClick: (Prediction prediction) async{
+                // log(prediction.placeId);
+                 fromName = await getPlaceNameFromId(prediction.placeId.toString()); // Fetch the place name
+
                 fromController.text = prediction.description!;
                 fromController.selection = TextSelection.fromPosition(
                   TextPosition(offset: fromController.text.length),
@@ -133,7 +154,9 @@ class _SearchPageState extends State<SearchPage> {
                   "lng": double.parse(prediction.lng!)
                 };
               },
-              itemClick: (Prediction prediction) {
+              itemClick: (Prediction prediction)async {
+                 toName = await getPlaceNameFromId(prediction.placeId.toString()); // Fetch the place name
+
                 toController.text = prediction.description!;
                 toController.selection = TextSelection.fromPosition(
                   TextPosition(offset: toController.text.length),

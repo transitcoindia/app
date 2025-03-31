@@ -9,6 +9,7 @@ UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
 String userModelToJson(UserModel data) => json.encode(data.toJson());
 
 class UserModel {
+  String? id;
     String? name;
     String? image;
     String? email;
@@ -25,6 +26,7 @@ class UserModel {
         this.dob,
         this.gender,
         this.passport,
+        this.id
     });
 
     UserModel copyWith({
@@ -35,6 +37,7 @@ class UserModel {
         DateTime? dob,
         String? gender,
         dynamic passport,
+        String? id
     }) => 
         UserModel(
             name: name ?? this.name,
@@ -44,6 +47,7 @@ class UserModel {
             dob: dob ?? this.dob,
             gender: gender ?? this.gender,
             passport: passport ?? this.passport,
+            id: id ?? this.id
         );
 
     factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -54,6 +58,7 @@ class UserModel {
         dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
         gender: json["gender"],
         passport: json["passport"],
+        id: json["id"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -64,5 +69,6 @@ class UserModel {
         "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
         "gender": gender,
         "passport": passport,
+        "id":id
     };
 }
