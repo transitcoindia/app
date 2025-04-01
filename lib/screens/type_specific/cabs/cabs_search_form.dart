@@ -23,8 +23,10 @@ class _SearchPageState extends State<SearchPage> {
   Map<String, double>? fromLocation;
   Map<String, double>? toLocation;
 
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
+  DateTime? fromDate; // Separate variable for 'From' date
+  DateTime? toDate; // Separate variable for 'To' date
+  TimeOfDay? fromTime; // Separate variable for 'From' time
+  TimeOfDay? toTime; // Separate variable for 'To' time
 
   Future<String> getPlaceNameFromId(String placeId) async {
     const String apiKey = kGoogleApiKey;
@@ -41,7 +43,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  void _selectDate(BuildContext context) async {
+  void _selectDate(BuildContext context, bool isFromDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -51,14 +53,17 @@ class _SearchPageState extends State<SearchPage> {
 
     if (picked != null) {
       setState(() {
-        log("Picked da ${picked!.day}");
-        selectedDate = picked;
-        log("Picked da ${selectedDate!.day}");
+        if (isFromDate) {
+          fromDate = picked; // Update only 'From' date
+        } else {
+          toDate = picked; // Update only 'To' date
+        }
+        log("Picked date: ${picked.day}");
       });
     }
   }
 
-  void _selectTime(BuildContext context) async {
+  void _selectTime(BuildContext context, bool isFromTime) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -66,9 +71,12 @@ class _SearchPageState extends State<SearchPage> {
 
     if (picked != null) {
       setState(() {
-        log("Picked da ${picked!.toString()}");
-        selectedTime = picked;
-        log("Picked da ${selectedTime!.toString()}");
+        if (isFromTime) {
+          fromTime = picked; // Update only 'From' time
+        } else {
+          toTime = picked; // Update only 'To' time
+        }
+        log("Picked time: ${picked.format(context)}");
       });
     }
   }
@@ -76,8 +84,10 @@ class _SearchPageState extends State<SearchPage> {
   void _searchRides() {
     if (fromController.text.isEmpty ||
         toController.text.isEmpty ||
-        selectedDate == null ||
-        selectedTime == null ||
+        fromDate == null ||
+        toDate == null ||
+        fromTime == null ||
+        toTime == null ||
         fromLocation == null ||
         toLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,8 +95,8 @@ class _SearchPageState extends State<SearchPage> {
       );
       return;
     }
-    log("Picked da ${selectedDate!.day}");
-    log("Picked da ${selectedTime!.toString()}");
+    log("From date: ${fromDate!.day}, To date: ${toDate!.day}");
+    log("From time: ${fromTime!.format(context)}, To time: ${toTime!.format(context)}");
 
     Navigator.push(
       context,
@@ -98,8 +108,8 @@ class _SearchPageState extends State<SearchPage> {
           toAddress: toController.text,
           fromLocation: fromLocation!,
           toLocation: toLocation!,
-          selectedDate: selectedDate!,
-          selectedTime: selectedTime!,
+          selectedDate: fromDate!,
+          selectedTime: fromTime!,
         ),
       ),
     );
@@ -124,13 +134,12 @@ class _SearchPageState extends State<SearchPage> {
             getPlaceDetailWithLatLng: (Prediction prediction) {
               fromLocation = {
                 "lat": double.parse(prediction.lat!),
-                "lng": double.parse(prediction.lng!)
+                "lng": double.parse(prediction.lng!),
               };
             },
             itemClick: (Prediction prediction) async {
-              // log(prediction.placeId);
-              fromName = await getPlaceNameFromId(
-                  prediction.placeId.toString()); // Fetch the place name
+              fromName =
+                  await getPlaceNameFromId(prediction.placeId.toString());
 
               fromController.text = prediction.description!;
               fromController.selection = TextSelection.fromPosition(
@@ -152,12 +161,11 @@ class _SearchPageState extends State<SearchPage> {
             getPlaceDetailWithLatLng: (Prediction prediction) {
               toLocation = {
                 "lat": double.parse(prediction.lat!),
-                "lng": double.parse(prediction.lng!)
+                "lng": double.parse(prediction.lng!),
               };
             },
             itemClick: (Prediction prediction) async {
-              toName = await getPlaceNameFromId(
-                  prediction.placeId.toString()); // Fetch the place name
+              toName = await getPlaceNameFromId(prediction.placeId.toString());
 
               toController.text = prediction.description!;
               toController.selection = TextSelection.fromPosition(
@@ -166,9 +174,9 @@ class _SearchPageState extends State<SearchPage> {
             },
           ),
           SizedBox(height: 25),
-          _buildDateTimeContainer("From", _selectDate, _selectTime),
+          _buildDateTimeContainer("From", _selectDate, _selectTime, true),
           SizedBox(height: 25),
-          _buildDateTimeContainer("To  ", _selectDate, _selectTime),
+          _buildDateTimeContainer("To", _selectDate, _selectTime, false),
           SizedBox(height: 45),
           SizedBox(
             width: double.infinity,
@@ -186,8 +194,11 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildDateTimeContainer(String label, Function(BuildContext) onDateTap,
-      Function(BuildContext) onTimeTap) {
+  Widget _buildDateTimeContainer(
+      String label,
+      Function(BuildContext, bool) onDateTap,
+      Function(BuildContext, bool) onTimeTap,
+      bool isFromDate) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -198,20 +209,26 @@ class _SearchPageState extends State<SearchPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () => onDateTap(context),
+            onTap: () => onDateTap(context, isFromDate),
             child: Text(
-              selectedDate == null
-                  ? "$label Date"
-                  : DateFormat('yyyy-MM-dd').format(selectedDate!),
+              isFromDate
+                  ? (fromDate == null
+                      ? "$label Date"
+                      : DateFormat('yyyy-MM-dd').format(fromDate!))
+                  : (toDate == null
+                      ? "$label Date"
+                      : DateFormat('yyyy-MM-dd').format(toDate!)),
               style: TextStyle(fontSize: 16, color: Colors.black),
             ),
           ),
           Text("|",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           GestureDetector(
-            onTap: () => onTimeTap(context),
+            onTap: () => onTimeTap(context, isFromDate),
             child: Text(
-              selectedTime == null ? "Time" : selectedTime!.format(context),
+              isFromDate
+                  ? (fromTime == null ? "Time" : fromTime!.format(context))
+                  : (toTime == null ? "Time" : toTime!.format(context)),
               style: TextStyle(fontSize: 16, color: Colors.black),
             ),
           ),

@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transit/bloc/auth_bloc/auth_bloc.dart';
+import 'package:transit/bloc/auth_bloc/auth_state.dart';
+import 'package:transit/screens/type_specific/cabs/booking_page.dart';
 import 'dart:convert';
 import 'package:transit/screens/type_specific/cabs/payment.dart';
 
@@ -139,75 +143,222 @@ class _ChooseRideScreenState extends State<ChooseRideScreen> {
   }
 }
 
+// class RideCard extends StatelessWidget {
+//   final dynamic ride;
+
+//   const RideCard({required this.ride, super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       elevation: 2,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       color: const Color(0xFFE6F7FB), // light blue background
+//       child: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             // LEFT SIDE: Text
+//             Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   ride["cab"]["type"] ?? "Cab Type",
+//                   style: const TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 4),
+//                 Text(
+//                   "Seats: ${ride["cab"]["seatingCapacity"]}",
+//                   style: TextStyle(
+//                     fontSize: 14,
+//                     color: Colors.grey[700],
+//                   ),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Text(
+//                   "₹${ride["fare"]["totalAmount"]}",
+//                   style: const TextStyle(
+//                     fontSize: 16,
+//                     fontWeight: FontWeight.w500,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 6),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     // Navigator.of(context).push(MaterialPageRoute(
+//                     //   builder: (context) =>
+//                     //       RazorpayPaymentPage(userId: "user_id_here"),
+//                     // ));
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (_) => BookingPage(
+//                           bookingId: "QT503901521",
+//                           rideData: ride,
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: Colors.blueGrey[900],
+//                     foregroundColor: Colors.white,
+//                     padding: const EdgeInsets.symmetric(
+//                       horizontal: 20,
+//                       vertical: 10,
+//                     ),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(6),
+//                     ),
+//                   ),
+//                   child: const Text("Book Now"),
+//                 ),
+//               ],
+//             ),
+//             // RIGHT SIDE: Car image
+//             Image.asset(
+//               'assets/bookingcar.png',
+//               width: 120,
+//               height: 80,
+//               fit: BoxFit.contain,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class RideCard extends StatelessWidget {
   final dynamic ride;
 
   const RideCard({required this.ride, super.key});
 
+  Future<void> _handleBookNow(BuildContext context) async {
+    final authState = context.read<AuthBloc>().state;
+
+    if (authState is! AuthAuthenticated) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    final userId =
+        "yourUserId"; // You can pass this from AuthBloc/UserBloc if needed
+
+    // Fetch the saved token from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken'); // Fetch the token
+    log("📦 Token read in RideCard: $token");
+    //final token =
+    //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtOHlncmVreTAwMDBsbDBqdjJiOGl5M3YiLCJpYXQiOjE3NDM1NDA5MDAsImV4cCI6MTc0MzU0MTgwMH0.iS9Leq7vhjwQHMVY2nKyzyXfMynHvyqr6Rfqr6ccTJc;";
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No authentication token found.")),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse("https://api.transitco.in/api/cab/book"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":
+              "Bearer $token", // Add token to the Authorization header
+        },
+        body: jsonEncode({
+          "tripType": 1,
+          "cabType": ride["cab"]["id"],
+          "routes": [
+            {
+              "startDate": "2025-04-10",
+              "startTime": "12:00:00",
+              "source": {
+                "address": "Pickup Address",
+                "coordinates": {"latitude": 22.65, "longitude": 88.44}
+              },
+              "destination": {
+                "address": "Drop Address",
+                "coordinates": {"latitude": 22.70, "longitude": 88.37}
+              }
+            }
+          ]
+        }),
+      );
+
+      // Log the status code and response body for debugging
+      log("Booking response status code: ${response.statusCode}");
+      log("Booking response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final bookingId = data["data"]["bookingId"];
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BookingPage(
+              bookingId: bookingId,
+              rideData: ride,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Booking failed. Try again.")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Something went wrong: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Color(0xFFE6F7FB),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: const Color(0xFFE6F7FB), // light blue background
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // LEFT SIDE: Text
+            // Text & Button
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   ride["cab"]["type"] ?? "Cab Type",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  "Seats: ${ride["cab"]["seatingCapacity"]}",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "₹${ride["fare"]["totalAmount"]}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 6),
+                SizedBox(height: 4),
+                Text("Seats: ${ride["cab"]["seatingCapacity"]}",
+                    style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+                SizedBox(height: 8),
+                Text("₹${ride["fare"]["totalAmount"]}",
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                SizedBox(height: 6),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          RazorpayPaymentPage(userId: "user_id_here"),
-                    ));
-                  },
+                  onPressed: () => _handleBookNow(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueGrey[900],
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
                   ),
-                  child: const Text("Book Now"),
+                  child: Text("Book Now"),
                 ),
               ],
             ),
-            // RIGHT SIDE: Car image
+            // Car image
             Image.asset(
               'assets/bookingcar.png',
               width: 120,

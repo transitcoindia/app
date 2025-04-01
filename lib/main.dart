@@ -50,6 +50,7 @@ Future<void> main() async {
   //   storageDirectory: await getApplicationDocumentsDirectory(),
   // );
   // }
+
   FlutterNativeSplash.remove();
 
   runApp(const MyApp());
