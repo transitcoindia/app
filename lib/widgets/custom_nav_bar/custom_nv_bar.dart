@@ -14,47 +14,100 @@ class CustomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-             double bottomPadding = MediaQuery.of(context).padding.bottom;
-    double iconSize =  24; // ✅ Selected = 28, Unselected = 24
-//isSelected ? 26 :
+    double bottomPadding = MediaQuery.of(context).padding.bottom;
+    double iconSize = 24; // Default icon size
     double height = 30.h;
-    double? width = null;
-    return Container(padding: EdgeInsets.all(0),
-    
+    double? width;
+
+    return Container(
+      padding: EdgeInsets.zero,
       child: Container(
-      decoration: BoxDecoration(color: elevatedButtonBlue),
-        padding: EdgeInsets.only(bottom: bottomPadding/1.8, top: 4), 
+        decoration: BoxDecoration(color: elevatedButtonBlue),
+        padding: EdgeInsets.only(bottom: bottomPadding / 1.8, top: 4),
         child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-      InkWell(
-        child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/home.png', height: iconSize,),)),
-         InkWell(child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/travel.png'),)),
-      InkWell(
-        onTap: () {
-           context.read<AuthBloc>().add(AuthLogout());
-        },
-        child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/explore.png'),)),
-      BlocBuilder<AuthBloc,AuthState>(builder: (context, state) {
-        log(state.toString());
-        return InkWell(
-          onTap: () {
-                    print(state.toString());
-
-            if(state is AuthAuthenticated){
-GoRouter.of(context).push('/profile');
-            }
-           else{
-            GoRouter.of(context).push('/login');
-
-           }
-          },
-          child: SizedBox(height: height,width:width,child: Image.asset('assets/bottom_bar_icons/profile.png'),));
-      },
-       
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            // Home Button
+            InkWell(
+              onTap: () {
+                // Add navigation logic for Home
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/bottom_bar_icons/home.png',
+                    height: iconSize,
+                  ),
+                  SizedBox(height: 4), // Space between icon and text
+                  Text(
+                    "Home",
+                    style: TextStyle(
+                      fontSize: 12.sp, // Responsive font size
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Booking Button
+            InkWell(
+              onTap: () {
+                // Add navigation logic for Booking
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/bottom_bar_icons/travel.png',
+                    height: iconSize,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "Booking",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Profile Button
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                log(state.toString());
+                return InkWell(
+                  onTap: () {
+                    if (state is AuthAuthenticated) {
+                      GoRouter.of(context).push('/profile');
+                    } else {
+                      GoRouter.of(context).push('/login');
+                    }
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/bottom_bar_icons/profile.png',
+                        height: iconSize,
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Profile",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
-            
-            ],),),
     );
   }
 }

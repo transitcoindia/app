@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:transit/screens/type_specific/cabs/search.dart';
 
-const String kGoogleApiKey = "AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc"; // Replace with your key
+const String kGoogleApiKey =
+    "AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc"; // Replace with your key
 
 class SearchPage extends StatefulWidget {
   @override
@@ -21,25 +22,24 @@ class _SearchPageState extends State<SearchPage> {
   String toName = '';
   Map<String, double>? fromLocation;
   Map<String, double>? toLocation;
-  
+
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
 
+  Future<String> getPlaceNameFromId(String placeId) async {
+    const String apiKey = kGoogleApiKey;
+    final String url =
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
 
-Future<String> getPlaceNameFromId(String placeId) async {
-  const String apiKey = kGoogleApiKey;
-  final String url =
-      'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
-
-  final response = await http.get(Uri.parse(url));
-log(response.body);
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    return data['result']['name'] ?? 'Unknown Place';
-  } else {
-    throw Exception('Failed to load place details');
+    final response = await http.get(Uri.parse(url));
+    log(response.body);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['result']['name'] ?? 'Unknown Place';
+    } else {
+      throw Exception('Failed to load place details');
+    }
   }
-}
 
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -53,8 +53,7 @@ log(response.body);
       setState(() {
         log("Picked da ${picked!.day}");
         selectedDate = picked;
-                log("Picked da ${selectedDate!.day}");
-
+        log("Picked da ${selectedDate!.day}");
       });
     }
   }
@@ -69,8 +68,7 @@ log(response.body);
       setState(() {
         log("Picked da ${picked!.toString()}");
         selectedTime = picked;
-                log("Picked da ${selectedTime!.toString()}");
-
+        log("Picked da ${selectedTime!.toString()}");
       });
     }
   }
@@ -87,13 +85,15 @@ log(response.body);
       );
       return;
     }
-                log("Picked da ${selectedDate!.day}");
-                log("Picked da ${selectedTime!.toString()}");
+    log("Picked da ${selectedDate!.day}");
+    log("Picked da ${selectedTime!.toString()}");
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChooseRideScreen(fromName: fromName,toName: toName,
+        builder: (context) => ChooseRideScreen(
+          fromName: fromName,
+          toName: toName,
           fromAddress: fromController.text,
           toAddress: toController.text,
           fromLocation: fromLocation!,
@@ -107,84 +107,116 @@ log(response.body);
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            GooglePlaceAutoCompleteTextField(
-              textEditingController: fromController,
-              googleAPIKey: kGoogleApiKey,
-              inputDecoration: InputDecoration(
-                labelText: "From Location",
-                suffixIcon: Icon(Icons.search),
-              ),
-              debounceTime: 800,
-              countries: ["IN"],
-              isLatLngRequired: true,
-              getPlaceDetailWithLatLng: (Prediction prediction) {
-                fromLocation = {
-                  "lat": double.parse(prediction.lat!),
-                  "lng": double.parse(prediction.lng!)
-                };
-              },
-              itemClick: (Prediction prediction) async{
-                // log(prediction.placeId);
-                 fromName = await getPlaceNameFromId(prediction.placeId.toString()); // Fetch the place name
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          GooglePlaceAutoCompleteTextField(
+            textEditingController: fromController,
+            googleAPIKey: kGoogleApiKey,
+            inputDecoration: InputDecoration(
+              labelText: "From Location",
+              suffixIcon: Icon(Icons.location_on_sharp),
+            ),
+            debounceTime: 800,
+            countries: ["IN"],
+            isLatLngRequired: true,
+            getPlaceDetailWithLatLng: (Prediction prediction) {
+              fromLocation = {
+                "lat": double.parse(prediction.lat!),
+                "lng": double.parse(prediction.lng!)
+              };
+            },
+            itemClick: (Prediction prediction) async {
+              // log(prediction.placeId);
+              fromName = await getPlaceNameFromId(
+                  prediction.placeId.toString()); // Fetch the place name
 
-                fromController.text = prediction.description!;
-                fromController.selection = TextSelection.fromPosition(
-                  TextPosition(offset: fromController.text.length),
-                );
-              },
+              fromController.text = prediction.description!;
+              fromController.selection = TextSelection.fromPosition(
+                TextPosition(offset: fromController.text.length),
+              );
+            },
+          ),
+          SizedBox(height: 25),
+          GooglePlaceAutoCompleteTextField(
+            textEditingController: toController,
+            googleAPIKey: kGoogleApiKey,
+            inputDecoration: InputDecoration(
+              labelText: "To Location",
+              suffixIcon: Icon(Icons.location_on_sharp),
             ),
-            SizedBox(height: 10),
-            GooglePlaceAutoCompleteTextField(
-              textEditingController: toController,
-              googleAPIKey: kGoogleApiKey,
-              inputDecoration: InputDecoration(
-                labelText: "To Location",
-                suffixIcon: Icon(Icons.search),
-              ),
-              debounceTime: 800,
-              countries: ["IN"],
-              isLatLngRequired: true,
-              getPlaceDetailWithLatLng: (Prediction prediction) {
-                toLocation = {
-                  "lat": double.parse(prediction.lat!),
-                  "lng": double.parse(prediction.lng!)
-                };
-              },
-              itemClick: (Prediction prediction)async {
-                 toName = await getPlaceNameFromId(prediction.placeId.toString()); // Fetch the place name
+            debounceTime: 800,
+            countries: ["IN"],
+            isLatLngRequired: true,
+            getPlaceDetailWithLatLng: (Prediction prediction) {
+              toLocation = {
+                "lat": double.parse(prediction.lat!),
+                "lng": double.parse(prediction.lng!)
+              };
+            },
+            itemClick: (Prediction prediction) async {
+              toName = await getPlaceNameFromId(
+                  prediction.placeId.toString()); // Fetch the place name
 
-                toController.text = prediction.description!;
-                toController.selection = TextSelection.fromPosition(
-                  TextPosition(offset: toController.text.length),
-                );
-              },
-            ),
-            SizedBox(height: 10),
-            ListTile(
-              title: Text(selectedDate == null
-                  ? "Select Date"
-                  : DateFormat('yyyy-MM-dd').format(selectedDate!)),
-              trailing: Icon(Icons.calendar_today),
-              onTap: () => _selectDate(context),
-            ),
-            ListTile(
-              title: Text(selectedTime == null
-                  ? "Select Time"
-                  : selectedTime!.format(context)),
-              trailing: Icon(Icons.access_time),
-              onTap: () => _selectTime(context),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
+              toController.text = prediction.description!;
+              toController.selection = TextSelection.fromPosition(
+                TextPosition(offset: toController.text.length),
+              );
+            },
+          ),
+          SizedBox(height: 25),
+          _buildDateTimeContainer("From", _selectDate, _selectTime),
+          SizedBox(height: 25),
+          _buildDateTimeContainer("To  ", _selectDate, _selectTime),
+          SizedBox(height: 45),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
               onPressed: _searchRides,
-              child: Text("Find Rides"),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Colors.black,
+              ),
+              child: Text("Search", style: TextStyle(color: Colors.white)),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeContainer(String label, Function(BuildContext) onDateTap,
+      Function(BuildContext) onTimeTap) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade400),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: () => onDateTap(context),
+            child: Text(
+              selectedDate == null
+                  ? "$label Date"
+                  : DateFormat('yyyy-MM-dd').format(selectedDate!),
+              style: TextStyle(fontSize: 16, color: Colors.black),
+            ),
+          ),
+          Text("|",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          GestureDetector(
+            onTap: () => onTimeTap(context),
+            child: Text(
+              selectedTime == null ? "Time" : selectedTime!.format(context),
+              style: TextStyle(fontSize: 16, color: Colors.black),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

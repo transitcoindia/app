@@ -39,10 +39,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> main() async {
- final widgetsBinding =  WidgetsFlutterBinding.ensureInitialized();
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide UI bars
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky); // Hide UI bars
 
-    // debugPrint("Phase 2");
+  // debugPrint("Phase 2");
 // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // Initialize HydratedStorage and set it as the storage for HydratedBloc
   // if(!kIsWeb ) {
@@ -50,10 +50,9 @@ Future<void> main() async {
   //   storageDirectory: await getApplicationDocumentsDirectory(),
   // );
   // }
-    FlutterNativeSplash.remove();
+  FlutterNativeSplash.remove();
 
   runApp(const MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
@@ -64,7 +63,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AuthBloc(UserBloc(UserRepository()))..add(AuthCheckRequested()),
+          create: (context) =>
+              AuthBloc(UserBloc(UserRepository()))..add(AuthCheckRequested()),
         ),
         BlocProvider(
             create: (context) => LocationBloc()
@@ -74,7 +74,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => FlightSearchBloc(FlightRepository()),
         ),
-        
         BlocProvider(
           create: (context) => MapBloc(),
         ),
@@ -119,12 +118,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => PreLoginCubit(),
         ),
-                BlocProvider(create: (context) => UserBloc(UserRepository())),
-
+        BlocProvider(create: (context) => UserBloc(UserRepository())),
       ],
       child: BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (previous, current) {
-          if (current is AuthLoading || current is AuthError ) {
+          if (current is AuthLoading || current is AuthError) {
             debugPrint("ahksdfhsdaf");
             return false;
           } else {
@@ -139,7 +137,8 @@ class MyApp extends StatelessWidget {
             child: MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'Flutter Demo',
-              theme: ThemeData(appBarTheme: AppBarTheme(backgroundColor:enabledFillColor ),
+              theme: ThemeData(
+                appBarTheme: AppBarTheme(backgroundColor: enabledFillColor),
                 fontFamily: 'Montserrat',
                 iconTheme: const IconThemeData(color: Colors.white),
                 textTheme: const TextTheme(

@@ -13,49 +13,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final authRepo = AuthRepo();
-    final UserBloc userBloc; // Inject UserBloc
-String? userId;
+  final UserBloc userBloc; // Inject UserBloc
+  String? userId;
   bool isAuthenticated = false;
-    static const String _authTokenKey = 'authToken';
+  static const String _authTokenKey = 'authToken';
 
- Stream<AuthState> get authStateStream => stream.where((state) =>
-    state is AuthAuthenticated || state is AuthUnauthenticated);
-  AuthBloc( this.userBloc) : super(AuthInitial()) {
+  Stream<AuthState> get authStateStream => stream.where(
+      (state) => state is AuthAuthenticated || state is AuthUnauthenticated);
 
-
-
-    
-    on<AuthCheckRequested>((event, emit) async{
+  AuthBloc(this.userBloc) : super(AuthInitial()) {
+    on<AuthCheckRequested>((event, emit) async {
       log("Auth check requested");
-       final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(_authTokenKey);
-    final email = prefs.getString("email");
-    final password = prefs.getString("password");
-          log("Auth check ${token}");
 
- if (!(token==null || token.isEmpty)) {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(_authTokenKey);
+      log("Auth check token: $token");
+
+      if (token != null && token.isNotEmpty) {
         emit(AuthAuthenticated());
-
-  await  authRepo.   signInUser(email!, password!).then((value) {
-    userBloc.add(LoadUser(value!));
-      isAuthenticated=true;
-      log("Passing $value");
-     
-      log(isAuthenticated.toString());
-    
-  },);
-  
-      // _isLoggedIn = true;
-      // // Optionally, you can load the user details if required
-      // _userProvider.loadUser(email,); // Call this with a proper identifier if required
-      // log("User is already logged in");
-    } else {
-      // handleError("TOken is ${token.toString()}");
-      // log("No saved token found, user is not logged in");
-    }
-      if (isAuthenticated) {
+        isAuthenticated = true;
+        log("User is authenticated");
       } else {
         emit(AuthUnauthenticated());
+        log("User is unauthenticated");
       }
     });
 
@@ -66,98 +46,33 @@ String? userId;
     on<AuthLoggedOut>((event, emit) {
       emit(AuthUnauthenticated());
     });
-on<AuthRequestOtp>((event, emit)async {
-  try{
 
-    await authRepo.sendOtp(event.mobile, event.email);
-  }catch(e){
-    emit(AuthError(errorMessage: e.toString()));
-  }
-},);
-    on<AuthLoginEvent>(
-      (event, emit) async {
-        try {
-          // emit(AuthLoading());
-          // debugPrint("should be in loading now");
-          // Call the login function and await its completion
-          final res = 
-          await authRepo
-              .signInUser(event.email, event.password)
-         
-             ;
-           
-        log(res==null?"True":"False");
-                if(res=='notVerified'){
-                  emit(AuthEmailVerify());
-                }else if( res == null)
-
-             {  
-              log("Emit correc state");
-              userId=res;
-                  emit(AuthAuthenticated());
-              isAuthenticated = true;
-
-                    //userBloc.add(LoadUser(res!));
-}
-
-          // After the successful login, emit the authenticated state
-        } catch (error) {
-          // If an error occurs, emit an error state
-          emit(AuthError(errorMessage: error.toString()));
+    on<AuthLoginEvent>((event, emit) async {
+      try {
+        final res = await authRepo.signInUser(event.email, event.password);
+        if (res != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_authTokenKey, res);
+          log("Token saved: ${prefs.getString(_authTokenKey)}");
+          emit(AuthAuthenticated());
+        } else {
+          emit(AuthUnauthenticated());
         }
-      },
-    );
+      } catch (error) {
+        emit(AuthError(errorMessage: error.toString()));
+      }
+    });
 
-  on<RegisterUserEvent>((event, emit) async {
-    emit(AuthLoading());
-    try {
- final res= await authRepo.registerUser(event.firstName,event.lastName,event.email,event.password,event.confirmPassword);
-if(res==null)
-{ emit(AuthAuthenticated());}
-
-else{
-  emit(AuthError(errorMessage: res));
-
-}
- // emit(WaitforOtp());
- 
-}  catch (e) {
-  emit(AuthError(errorMessage: e.toString()));
-  
-}
-  },);
-
-on<AuthSendVerificationEmail>((event, emit) async{
-  try {
- var res =  await authRepo.sendVerifyEmail(event.email);
- 
-} catch (e) {
-  emit(AuthError(errorMessage: "Unable to send verification email"));
-}
-});
-on<AuthLogout>((event, emit)async {
-  await authRepo.logout();
-  debugPrint("I am emitting the unauth state");
-  emit(AuthUnauthenticated());
-},);
- on<SubmitOtp>((event,emit) async {
-  try {
-      emit(AuthLoading());
-
-  await authRepo.verifyOtp();
-  emit(AuthAuthenticated());
-}  catch (e) {
-  emit(AuthError(errorMessage: e.toString()));
-}
-  
-    //await authRepo.registerUser(userName, password, name, phoneNumber)
-  });
-
+    on<AuthLogout>((event, emit) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_authTokenKey);
+      await authRepo.logout();
+      debugPrint("I am emitting the unauth state");
+      emit(AuthUnauthenticated());
+    });
   }
-  
 
- 
- AuthState fromJson(Map<String, dynamic> json) {
+  AuthState fromJson(Map<String, dynamic> json) {
     try {
       final isAuthenticated = json['isAuthenticated'] as bool;
       return isAuthenticated ? AuthAuthenticated() : AuthUnauthenticated();
@@ -174,7 +89,4 @@ on<AuthLogout>((event, emit)async {
     }
     return {};
   }
-  
 }
-
-

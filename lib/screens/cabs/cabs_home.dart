@@ -8,6 +8,7 @@ import 'package:transit/cubits/flights_cubit/flight_det_cubit.dart';
 import 'package:transit/screens/map/map_widget.dart';
 import 'package:transit/screens/type_specific/cabs/cabs_search_form.dart';
 import 'package:transit/screens/type_specific/flights/flight_search_form.dart';
+import 'package:transit/widgets/custom_nav_bar/custom_nv_bar.dart';
 
 class CabsHome extends StatelessWidget {
   const CabsHome({super.key});
@@ -18,42 +19,36 @@ class CabsHome extends StatelessWidget {
       create: (_) => FlightTypeCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: Row(
-            children: [
-              Hero(
-                tag: serviceTypeAssetString[0],
-                child: SizedBox(
-                  height: 30.h,
-                  width: 30.w,
-                  child: Image.asset(
-                    serviceTypeAssetString[0],
-                    fit: BoxFit.cover,
-                    color: black,
-                  ),
-                ),
-              ),
-              SizedBox(width: 10.w),
-              const Text('Cabs'),
-            ],
-          ),
+          title: Text("Find Your Ride"),
         ),
         body: Padding(
           padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            
-              SizedBox(height: 20.h),
-               SearchPage(),
-              // Container(
-              //   color: Colors.pink,height: 450,
-              //   child: MapScreen())
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20.h),
+                SearchPage(),
+                // Container(
+                //   color: Colors.pink,height: 450,
+                //   child: MapScreen())
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+          child: SizedBox(
+            key: ValueKey('bnb'),
+            height: 80.h,
+            child: CustomNavBar(),
           ),
         ),
       ),
     );
   }
 }
-
-

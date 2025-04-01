@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/Users/adrianrichardbenjamin/Desktop/Projects/flutter projects/transit/linux"
+    "cmake.sourceDirectory": "/Users/adrianrichardbenjamin/Desktop/Projects/flutter projects/transit/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
