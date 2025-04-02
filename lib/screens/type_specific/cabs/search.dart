@@ -16,20 +16,25 @@ class ChooseRideScreen extends StatefulWidget {
   final String toAddress;
   final Map<String, double> fromLocation;
   final Map<String, double> toLocation;
-  final DateTime selectedDate;
-  final TimeOfDay selectedTime;
+  final DateTime fromDate;
+  final DateTime toDate;
+  final TimeOfDay fromTime;
+  final TimeOfDay toTime;
   final String fromName;
   final String toName;
 
-  ChooseRideScreen(
-      {required this.fromAddress,
-      required this.toAddress,
-      required this.fromLocation,
-      required this.toLocation,
-      required this.selectedDate,
-      required this.selectedTime,
-      required this.fromName,
-      required this.toName});
+  ChooseRideScreen({
+    required this.fromAddress,
+    required this.toAddress,
+    required this.fromLocation,
+    required this.toLocation,
+    required this.fromDate,
+    required this.toDate,
+    required this.fromTime,
+    required this.toTime,
+    required this.fromName,
+    required this.toName,
+  });
 
   @override
   _ChooseRideScreenState createState() => _ChooseRideScreenState();
@@ -63,8 +68,8 @@ class _ChooseRideScreenState extends State<ChooseRideScreen> {
       "cabType": [1, 2, 14, 15, 16, 72, 73, 74],
       "routes": [
         {
-          "startDate": DateFormat('yyyy-MM-dd').format(widget.selectedDate),
-          "startTime": formatTimeOfDay(widget.selectedTime),
+          "startDate": DateFormat('yyyy-MM-dd').format(widget.fromDate),
+          "startTime": formatTimeOfDay(widget.fromTime),
           "source": {
             "address": widget.fromAddress,
             "name": widget.fromName,
@@ -135,7 +140,14 @@ class _ChooseRideScreenState extends State<ChooseRideScreen> {
                     itemCount: rides.length,
                     itemBuilder: (context, index) {
                       final ride = rides[index];
-                      return RideCard(ride: ride);
+                      return RideCard(
+                        ride: ride,
+                        fromAddress: widget.fromAddress,
+                        toAddress: widget.toAddress,
+                        fromLocation: widget.fromLocation,
+                        toLocation: widget.toLocation,
+                        fromTime: widget.fromTime,
+                      );
                     },
                   ),
       ),
@@ -233,93 +245,23 @@ class _ChooseRideScreenState extends State<ChooseRideScreen> {
 //     );
 //   }
 // }
-
 class RideCard extends StatelessWidget {
   final dynamic ride;
+  final String fromAddress;
+  final String toAddress;
+  final Map<String, double> fromLocation;
+  final Map<String, double> toLocation;
+  final TimeOfDay fromTime;
 
-  const RideCard({required this.ride, super.key});
-
-  Future<void> _handleBookNow(BuildContext context) async {
-    final authState = context.read<AuthBloc>().state;
-
-    if (authState is! AuthAuthenticated) {
-      Navigator.pushNamed(context, '/login');
-      return;
-    }
-
-    final userId =
-        "yourUserId"; // You can pass this from AuthBloc/UserBloc if needed
-
-    // Fetch the saved token from SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken'); // Fetch the token
-    log("📦 Token read in RideCard: $token");
-    //final token =
-    //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtOHlncmVreTAwMDBsbDBqdjJiOGl5M3YiLCJpYXQiOjE3NDM1NDA5MDAsImV4cCI6MTc0MzU0MTgwMH0.iS9Leq7vhjwQHMVY2nKyzyXfMynHvyqr6Rfqr6ccTJc;";
-
-    if (token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No authentication token found.")),
-      );
-      return;
-    }
-
-    try {
-      final response = await http.post(
-        Uri.parse("https://api.transitco.in/api/cab/book"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization":
-              "Bearer $token", // Add token to the Authorization header
-        },
-        body: jsonEncode({
-          "tripType": 1,
-          "cabType": ride["cab"]["id"],
-          "routes": [
-            {
-              "startDate": "2025-04-10",
-              "startTime": "12:00:00",
-              "source": {
-                "address": "Pickup Address",
-                "coordinates": {"latitude": 22.65, "longitude": 88.44}
-              },
-              "destination": {
-                "address": "Drop Address",
-                "coordinates": {"latitude": 22.70, "longitude": 88.37}
-              }
-            }
-          ]
-        }),
-      );
-
-      // Log the status code and response body for debugging
-      log("Booking response status code: ${response.statusCode}");
-      log("Booking response body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final bookingId = data["data"]["bookingId"];
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BookingPage(
-              bookingId: bookingId,
-              rideData: ride,
-            ),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Booking failed. Try again.")),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Something went wrong: $e")),
-      );
-    }
-  }
+  const RideCard({
+    required this.ride,
+    required this.fromAddress,
+    required this.toAddress,
+    required this.fromLocation,
+    required this.toLocation,
+    required this.fromTime,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +274,6 @@ class RideCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Text & Button
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -349,7 +290,15 @@ class RideCard extends StatelessWidget {
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 SizedBox(height: 6),
                 ElevatedButton(
-                  onPressed: () => _handleBookNow(context),
+                  onPressed: () => _handleBookNow(
+                    context,
+                    ride,
+                    fromAddress,
+                    toAddress,
+                    fromLocation,
+                    toLocation,
+                    fromTime,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueGrey[900],
                     foregroundColor: Colors.white,
@@ -358,7 +307,6 @@ class RideCard extends StatelessWidget {
                 ),
               ],
             ),
-            // Car image
             Image.asset(
               'assets/bookingcar.png',
               width: 120,
@@ -369,5 +317,117 @@ class RideCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String formatTimeOfDay(TimeOfDay time) {
+    final int hour = time.hour;
+    final int minute = time.minute;
+    final String period = hour >= 12 ? "PM" : "AM";
+    final int formattedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    final String formattedMinute = minute.toString().padLeft(2, '0');
+
+    return "$formattedHour:$formattedMinute $period";
+  }
+
+  Future<void> _handleBookNow(
+      BuildContext context,
+      Map<String, dynamic> ride,
+      String fromAddress,
+      String toAddress,
+      Map<String, double> fromLocation,
+      Map<String, double> toLocation,
+      TimeOfDay fromTime) async {
+    log("Proceeding with booking...");
+    final bookingRequest = {
+      "tnc": 1,
+      "referenceId": "tttt",
+      "tripType": 1,
+      "cabType": 3,
+      "fare": {"advanceReceived": 0, "totalAmount": 2082},
+      "platform": {"deviceName": "", "ip": "", "type": ""},
+      "apkVersion": "",
+      "sendEmail": 1,
+      "sendSms": 1,
+      "routes": [
+        {
+          "startDate": "2025-04-25",
+          "startTime": "17:10:00",
+          "source": {
+            "address": "Bengaluru",
+            "coordinates": {
+              "latitude": 12.9087928999999999035708242445252835750579833984375,
+              "longitude": 77.64249780000000100699253380298614501953125
+            }
+          },
+          "destination": {
+            "address": "Bengaluru airport",
+            "coordinates": {
+              "latitude": 13.2007713317871004932158029987476766109466552734375,
+              "longitude": 77.71022796630859375
+            }
+          }
+        }
+      ],
+      "traveller": {
+        "firstName": "Tapesh",
+        "lastName": "",
+        "primaryContact": {"code": 91, "number": "7085563968"},
+        "alternateContact": {"code": 91, "number": "8794103394"},
+        "email": "test.yadav4@gmail.com",
+        "companyName": "",
+        "address": "",
+        "gstin": ""
+      },
+      "additionalInfo": {
+        "specialInstructions": "cab should be clean",
+        "noOfPerson": 4,
+        "noOfLargeBags": 0,
+        "noOfSmallBags": 3,
+        "carrierRequired": 0,
+        "kidsTravelling": 0,
+        "seniorCitizenTravelling": 0,
+        "womanTravelling": 0
+      }
+    };
+
+    log("Booking Request: ${jsonEncode(bookingRequest)}");
+
+    try {
+      final response = await http.post(
+        Uri.parse("https://api.transitco.in/api/cab/book"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(bookingRequest),
+      );
+
+      log("Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data["success"] == true) {
+          final String bookingId = data["data"]["bookingId"];
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookingPage(
+                bookingId: bookingId,
+                rideData: ride,
+              ),
+            ),
+          );
+        } else {
+          _showMessage(context, "Booking failed: ${data["message"]}");
+        }
+      } else {
+        _showMessage(context, "Failed to book ride.");
+      }
+    } catch (e) {
+      log("Booking error: $e");
+      _showMessage(context, "Error: $e");
+    }
+  }
+
+  void _showMessage(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 }

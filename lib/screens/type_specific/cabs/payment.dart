@@ -21,7 +21,8 @@ class UserModel {
 }
 
 class UserRepository {
-  static const String _baseUrl = 'https://transit-be.vercel.app/api/user/details';
+  static const String _baseUrl =
+      'https://transit-be.vercel.app/api/user/details';
 
   Future<UserModel> fetchUser(String userId) async {
     final response = await http.get(Uri.parse('$_baseUrl?userId=$userId'));
@@ -129,19 +130,19 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
 
     try {
       var orderResponse = await Dio().post(
-        "https://transit-be.vercel.appapi/payments/create-order",
+        "https://transit-be.vercel.app/api/payments/create-order",
         data: {
           "name": _nameController.text,
           "email": _emailController.text,
           "phoneNumber": _phoneController.text,
-          "amount": _amountController.text,
+          "amount": (double.parse(_amountController.text) * 100).toInt(),
         },
       );
 
       var orderData = orderResponse.data;
       var options = {
         //razorpay key id
-        "key": "YOUR_RAZORPAY_KEY_ID",
+        "key": "rzp_test_c0XaxJ4rHrbx7m",
         "amount": orderData["amount"],
         "currency": orderData["currency"],
         "name": "Your Company Name",
@@ -158,7 +159,7 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
       _razorpay.open(options);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to initiate payment")),
+        SnackBar(content: Text("Error: ${e.toString()}")),
       );
     } finally {
       setState(() => isProcessing = false);

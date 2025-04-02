@@ -1,51 +1,51 @@
-
-
 import 'dart:convert';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 final String endpoint = 'https://api.transitco.in';
+
 class AuthRepo {
-    static const String _authTokenKey = 'authToken';
-String? userId;
-Future<String?> signInUser(String userName, String password)async {
- String loginUrl = '${endpoint}/api/auth/login';
- try{
-  final loginResponse = await http.post(
-      Uri.parse(loginUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'identifier': userName,
-        'password':password
-      }),
-    );
-     log(loginResponse.body.toString());
-     log(loginResponse.statusCode.toString());
+  static const String _authTokenKey = 'authToken';
+  String? userId;
+  Future<String?> signInUser(String userName, String password) async {
+    String loginUrl = '${endpoint}/api/auth/login';
+    try {
+      final loginResponse = await http.post(
+        Uri.parse(loginUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'identifier': userName, 'password': password}),
+      );
+      log(loginResponse.body.toString());
 
-  final Map<String, dynamic> responseData = jsonDecode(loginResponse.body);
-  print(responseData);
-  userId=responseData['user']['id'];
-//  var token =null;
-if (loginResponse.statusCode==200) {
-  //  token = responseData['token'];
-  // print("Token: $token");
-  return responseData['user']['id'];
+      final Map<String, dynamic> responseData = jsonDecode(loginResponse.body);
+      if (loginResponse.statusCode == 200) {
+        var accessToken = responseData['accessToken'];
+        var refreshToken = responseData['refreshToken'];
+        var userId = responseData['user']['id'];
 
-} 
- else if (loginResponse.statusCode==403){
+        print("Access Token: $accessToken");
+
+        // Store tokens in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', accessToken);
+        await prefs.setString('refreshToken', refreshToken);
+        await prefs.setString('userId', userId);
+
+        return userId;
+      } else {
         print('Failed to login user: ${loginResponse.body}');
-        return "notVerified";
+        return null;
       }
-      else if (loginResponse.statusCode==401){
-        print('Failed to login user: ${loginResponse.body}');
-        return responseData['error'];
-      }
-
+    } catch (e) {
+      print("Login error: $e");
+      return null;
+    }
+  }
 
 //     if(
 //       loginResponse.statusCode == 200 / TODO: Remove comment in prod
-        
 
 //     ){
 // //       log(responseData.containsKey('user').toString());
@@ -58,50 +58,30 @@ if (loginResponse.statusCode==200) {
 //     // return responseData['user']['id'];
 //     }else{
 //       throw(json.decode(loginResponse.body)['error']);
-   
+
 //     }
 
-
- }catch (e){
-  print("Is it coming in eroror for no reason");
-  rethrow;
- }
-
- 
- }
-
-
-Future<void> sendOtp(String? phoneNumber, String? email) async{
+  Future<void> sendOtp(String? phoneNumber, String? email) async {
     const otpUrl = 'https://api.transitco.in/auth/otp/send';
-    try{
- final otpResponse = await http.post(
-      Uri.parse(otpUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        if(phoneNumber!=null)
-        'mobile': phoneNumber.toString().trim(),
-         if(email!=null)
-        'email': email.toString().trim(),
-      }),
-    );
+    try {
+      final otpResponse = await http.post(
+        Uri.parse(otpUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          if (phoneNumber != null) 'mobile': phoneNumber.toString().trim(),
+          if (email != null) 'email': email.toString().trim(),
+        }),
+      );
+    } catch (e) {}
+  }
 
-    }catch (e){
+  Future<String?> registerUser(String firstName, String lastName, String email,
+      String password, String confirmPassword) async {
+    String registerUrl = '${endpoint}/api/auth/register';
 
+    try {
+      // Step 1: Request OTP
 
-    }}
-
-
-
-
-
-
-Future<String?> registerUser(String firstName, String lastName, String email, String password,String confirmPassword) async {
-  String registerUrl = '${endpoint}/api/auth/register';
-
-  try {
-    // Step 1: Request OTP
-   
-    
       // Step 2: Register User
       final response = await http.post(
         Uri.parse(registerUrl),
@@ -116,82 +96,67 @@ Future<String?> registerUser(String firstName, String lastName, String email, St
           // 'otp': otp.toString(),
         }),
       );
-log(response.toString());
-log(response.body.toString());
-log(response.statusCode.toString());
+      log(response.toString());
+      log(response.body.toString());
+      log(response.statusCode.toString());
       if (response.statusCode == 201) {
         print('User registered successfully: ${response.body}');
         return null;
-      } 
-     
-      else {
+      } else {
         print('Failed to register user: ${response.body}');
         return response.body.toString();
       }
-
-    
-  } catch (e) {
-    print('An error occurred: $e');
-    return 'Error occoured';
+    } catch (e) {
+      print('An error occurred: $e');
+      return 'Error occoured';
+    }
   }
-}
-
 
   bool checkIsAuthenticated() {
     return false;
   }
 
- Future<void> verifyOtp() async {
-
-
- 
- await Future.delayed(const Duration(seconds: 3));
-  return Future.value();}
-
-  logout() async{
-       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove("password");
-      await prefs.remove(_authTokenKey);
-      await prefs.remove("email");
+  Future<void> verifyOtp() async {
+    await Future.delayed(const Duration(seconds: 3));
+    return Future.value();
   }
 
- Future<String?> sendVerifyEmail(String email) async{
-  String registerUrl = '${endpoint}/api/auth/verify-email';
+  logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove("password");
+    await prefs.remove(_authTokenKey);
+    await prefs.remove("email");
+  }
 
-  try {
-    // Step 1: Request OTP
-   
-    
+  Future<String?> sendVerifyEmail(String email) async {
+    String registerUrl = '${endpoint}/api/auth/verify-email';
+
+    try {
+      // Step 1: Request OTP
+
       // Step 2: Register User
       final response = await http.post(
         Uri.parse(registerUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-    
           'email': email,
 
           // 'otp': otp.toString(),
         }),
       );
-log(response.toString());
-log(response.body.toString());
-log(response.statusCode.toString());
+      log(response.toString());
+      log(response.body.toString());
+      log(response.statusCode.toString());
       if (response.statusCode == 201) {
         print('Email verify email sent successfully: ${response.body}');
         return null;
-      } 
-     
-      else {
+      } else {
         print('Failed to register user: ${response.body}');
         return response.body.toString();
       }
-
-    
-  } catch (e) {
-    print('An error occurred: $e');
-    return 'Error occoured';
+    } catch (e) {
+      print('An error occurred: $e');
+      return 'Error occoured';
+    }
   }
-
-  }
-
 }

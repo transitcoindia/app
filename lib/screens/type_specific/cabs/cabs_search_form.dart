@@ -108,8 +108,10 @@ class _SearchPageState extends State<SearchPage> {
           toAddress: toController.text,
           fromLocation: fromLocation!,
           toLocation: toLocation!,
-          selectedDate: fromDate!,
-          selectedTime: fromTime!,
+          fromDate: fromDate!,
+          fromTime: fromTime!,
+          toDate: toDate!,
+          toTime: toTime!,
         ),
       ),
     );
