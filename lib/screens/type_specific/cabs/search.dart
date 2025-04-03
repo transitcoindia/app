@@ -10,6 +10,7 @@ import 'package:transit/bloc/auth_bloc/auth_state.dart';
 import 'package:transit/screens/type_specific/cabs/booking_page.dart';
 import 'dart:convert';
 import 'package:transit/screens/type_specific/cabs/payment.dart';
+import 'package:transit/screens/type_specific/cabs/paymentScreen.dart';
 
 class ChooseRideScreen extends StatefulWidget {
   final String fromAddress;

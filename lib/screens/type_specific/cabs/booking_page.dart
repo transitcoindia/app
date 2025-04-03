@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -6,6 +7,7 @@ import 'package:transit/bloc/user_specific/user_bloc.dart/user_bloc.dart';
 import 'package:transit/bloc/user_specific/user_bloc.dart/user_states.dart';
 
 import 'package:transit/screens/type_specific/cabs/payment.dart';
+import 'package:transit/screens/type_specific/cabs/paymentScreen.dart';
 
 class BookingPage extends StatefulWidget {
   final String bookingId;
@@ -51,7 +53,12 @@ class _BookingPageState extends State<BookingPage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        log("Confirmed Booking Data: $data");
+
         confirmedBookingId = data["data"]["bookingId"];
+        _showMessage("Ride Confirmed ✅");
+
+        // Fetch booking details and then navigate to payment
         await _fetchBookingDetails(confirmedBookingId!);
       } else {
         _showMessage("Failed to confirm ride.");
@@ -64,20 +71,27 @@ class _BookingPageState extends State<BookingPage> {
 
   Future<void> _fetchBookingDetails(String bookingId) async {
     try {
-      final response = await http.post(
+      var request = http.Request(
+        'GET',
         Uri.parse("https://api.transitco.in/api/cab/getBookingDetails"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"bookingId": bookingId}),
       );
 
+      request.body = jsonEncode({"bookingId": bookingId});
+      request.headers.addAll({"Content-Type": "application/json"});
+
+      http.StreamedResponse response = await request.send();
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final responseData = await response.stream.bytesToString();
+        final data = jsonDecode(responseData);
         setState(() {
           bookingDetails = data["data"];
         });
+        log("Booking Details: $bookingDetails");
         _showMessage("Ride Confirmed ✅");
       } else {
-        _showMessage("Failed to fetch booking details");
+        _showMessage(
+            "Failed to fetch booking details: ${response.reasonPhrase}");
       }
     } catch (e) {
       _showMessage("Error fetching details: $e");
@@ -120,18 +134,10 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   void _goToPayment() {
-    final amount = bookingDetails?["cabRate"]?["fare"]?["totalAmount"];
-    if (amount == null) {
-      _showMessage("Amount not available");
-      return;
-    }
-
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => RazorpayPaymentPage(
-          userId: userId,
-        ),
+        builder: (_) => PaymentScreen(),
       ),
     );
   }

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:intl/intl.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:transit/screens/type_specific/cabs/search.dart';
+import 'package:transit/screens/type_specific/cabs/select_location_screen.dart';
 
 const String kGoogleApiKey =
     "AIzaSyBkMWyYFXHFAZHunyeb07KahLaAbPPesOc"; // Replace with your key
@@ -40,6 +42,33 @@ class _SearchPageState extends State<SearchPage> {
       return data['result']['name'] ?? 'Unknown Place';
     } else {
       throw Exception('Failed to load place details');
+    }
+  }
+
+  void _openMap(bool isFrom) async {
+    LatLng? selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SelectLocationScreen()),
+    );
+
+    if (selectedLocation != null) {
+      setState(() {
+        if (isFrom) {
+          fromLocation = {
+            "lat": selectedLocation.latitude,
+            "lng": selectedLocation.longitude
+          };
+          fromController.text =
+              "Lat: ${selectedLocation.latitude}, Lng: ${selectedLocation.longitude}";
+        } else {
+          toLocation = {
+            "lat": selectedLocation.latitude,
+            "lng": selectedLocation.longitude
+          };
+          toController.text =
+              "Lat: ${selectedLocation.latitude}, Lng: ${selectedLocation.longitude}";
+        }
+      });
     }
   }
 
@@ -128,7 +157,10 @@ class _SearchPageState extends State<SearchPage> {
             googleAPIKey: kGoogleApiKey,
             inputDecoration: InputDecoration(
               labelText: "From Location",
-              suffixIcon: Icon(Icons.location_on_sharp),
+              suffixIcon: IconButton(
+                icon: Icon(Icons.location_on_outlined),
+                onPressed: () => _openMap(true),
+              ),
             ),
             debounceTime: 800,
             countries: ["IN"],
@@ -155,7 +187,10 @@ class _SearchPageState extends State<SearchPage> {
             googleAPIKey: kGoogleApiKey,
             inputDecoration: InputDecoration(
               labelText: "To Location",
-              suffixIcon: Icon(Icons.location_on_sharp),
+              suffixIcon: IconButton(
+                icon: Icon(Icons.location_on_outlined),
+                onPressed: () => _openMap(false),
+              ),
             ),
             debounceTime: 800,
             countries: ["IN"],
